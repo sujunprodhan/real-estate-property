@@ -35,3 +35,10 @@
     min-height: 100vh;
   }
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { getProduct } from '../../actions/server/product';
 import ProductListClient from '../../componets/ProductListClient';
 
@@ -31,12 +31,20 @@ const PropertiesPage = async () => {
       </div>
 
       <div className="container mx-auto px-6 lg:px-12">
-
-        {/* Product List Component (Showing 6 per page here instead of 3) */}
-        <ProductListClient initialProducts={products} itemsPerPage={6} showSearchBar={true} />
+        {/* Suspense wrapper for query routing safe optimization */}
+        <Suspense fallback={
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <span className="loading loading-spinner loading-xl text-primary"></span>
+            <p className="text-sm font-semibold text-base-content/50 animate-pulse">Loading listing dashboard...</p>
+          </div>
+        }>
+          {/* Product List Component (Showing 6 per page here instead of 3) */}
+          <ProductListClient initialProducts={products} itemsPerPage={6} showSearchBar={true} />
+        </Suspense>
       </div>
     </main>
   );
 };
 
 export default PropertiesPage;
+

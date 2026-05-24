@@ -96,7 +96,7 @@ const Navbar = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
               {navLinks.map((link) => (
-                <Navlink key={link.name} href={link.href}>
+                <Navlink key={link.name} href={link.href} scrolled={isScrolled}>
                   {link.name}
                 </Navlink>
               ))}
@@ -106,27 +106,33 @@ const Navbar = () => {
             <div className="hidden md:flex items-center gap-2">
               <button
                 onClick={toggleTheme}
-                className="btn btn-ghost btn-circle text-base-content/80 hover:text-primary transition-colors"
+                className={`btn btn-ghost btn-circle hover:text-primary transition-colors ${
+                  isScrolled ? 'text-base-content/80' : 'text-white/80 hover:text-white'
+                }`}
                 aria-label="Toggle Theme"
               >
                 {theme === 'light' ? <Moon size={22} /> : <Sun size={22} />}
               </button>
               <Link
                 href="/favorites"
-                className="btn btn-ghost btn-circle text-base-content/80 hover:text-primary transition-colors"
+                className={`btn btn-ghost btn-circle hover:text-primary transition-colors ${
+                  isScrolled ? 'text-base-content/80' : 'text-white/80 hover:text-white'
+                }`}
                 aria-label="Favorites"
               >
                 <Heart size={22} />
               </Link>
               <Link
                 href="/cart"
-                className="btn btn-ghost btn-circle text-base-content/80 hover:text-primary transition-colors"
+                className={`btn btn-ghost btn-circle hover:text-primary transition-colors ${
+                  isScrolled ? 'text-base-content/80' : 'text-white/80 hover:text-white'
+                }`}
                 aria-label="Cart"
               >
                 <ShoppingCart size={22} />
               </Link>
               <div className="ml-2">
-                <AuthButton />
+                <AuthButton scrolled={isScrolled} />
               </div>
             </div>
 
@@ -134,28 +140,36 @@ const Navbar = () => {
             <div className="flex md:hidden items-center gap-1">
               <button
                 onClick={toggleTheme}
-                className="btn btn-ghost btn-circle text-base-content/80"
+                className={`btn btn-ghost btn-circle ${
+                  isScrolled ? 'text-base-content/80' : 'text-white/80'
+                }`}
                 aria-label="Toggle Theme"
               >
                 {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
               </button>
               <Link
                 href="/favorites"
-                className="btn btn-ghost btn-circle text-base-content/80"
+                className={`btn btn-ghost btn-circle ${
+                  isScrolled ? 'text-base-content/80' : 'text-white/80'
+                }`}
                 aria-label="Favorites"
               >
                 <Heart size={20} />
               </Link>
               <Link
                 href="/cart"
-                className="btn btn-ghost btn-circle text-base-content/80"
+                className={`btn btn-ghost btn-circle ${
+                  isScrolled ? 'text-base-content/80' : 'text-white/80'
+                }`}
                 aria-label="Cart"
               >
                 <ShoppingCart size={20} />
               </Link>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="btn btn-ghost btn-circle"
+                className={`btn btn-ghost btn-circle ${
+                  isScrolled ? 'text-base-content/80' : 'text-white/80'
+                }`}
                 aria-label="Toggle Menu"
               >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -184,12 +198,7 @@ const Navbar = () => {
 
             {/* Mobile Auth Buttons */}
             <div className="pt-4 flex flex-col gap-3">
-              <button className="btn btn-ghost rounded-full w-full font-semibold border border-base-content/20 hover:bg-primary/10 hover:text-primary transition-colors">
-                Log In
-              </button>
-              <button className="btn btn-primary rounded-full w-full font-semibold shadow-lg shadow-primary/30 border-none text-white">
-                Sign Up
-              </button>
+              <AuthButton scrolled={true} />
             </div>
           </div>
         </div>

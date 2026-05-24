@@ -9,7 +9,9 @@ const Navlink = ({ href, children, scrolled }) => {
   const isActive = href === '/' ? path === '/' : path?.startsWith(href);
   const textClass = isActive
     ? 'text-primary'
-    : 'text-base-content/80 hover:text-primary';
+    : scrolled
+      ? 'text-base-content/80 hover:text-primary'
+      : 'text-white/80 hover:text-white';
 
   return (
     <Link
