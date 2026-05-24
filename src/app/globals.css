@@ -2,21 +2,36 @@
 @plugin "daisyui" {
   themes: light --default, night;
 }
+
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
-  --color-primary: #10b981;
-  --color-secondary: #14b8a6;
+  --color-primary: #4F46E5; /* Indigo-600 */
+  --color-secondary: #06B6D4; /* Cyan-500 */
+  --color-base-100: #FFFFFF; /* Pure crisp white for ultra-clean look */
+  --color-base-200: #F8FAFC; /* Slate-50 for subtle contrast */
+  --color-base-300: #E2E8F0; /* Slate-200 */
+  --color-base-content: #0F172A; /* Slate-900 */
 }
 
 @plugin "daisyui/theme" {
   name: "night";
-  --color-primary: #10b981;
-  --color-secondary: #14b8a6;
-  --color-base-100: #020617;
-  --color-base-200: #0f172a;
-  --color-base-300: #1e293b;
-  --color-base-content: #f8fafc;
+  --color-primary: #6366F1; /* Indigo-500 */
+  --color-secondary: #22D3EE; /* Cyan-400 */
+  --color-base-100: #020617; /* Slate-950, highly premium dark mode */
+  --color-base-200: #0F172A; /* Slate-900 */
+  --color-base-300: #1E293B; /* Slate-800 */
+  --color-base-content: #F8FAFC; /* Slate-50 */
 }
 
 @custom-variant dark (&:where([data-theme=night], [data-theme=night] *));
+
+@layer base {
+  body {
+    /* Smooth transition for theme switching */
+    @apply transition-colors duration-500 ease-in-out;
+    background-color: var(--color-base-100);
+    color: var(--color-base-content);
+    min-height: 100vh;
+  }
+}

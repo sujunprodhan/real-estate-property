@@ -3,7 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Home, Building, Users, Phone, Heart, ShoppingCart } from 'lucide-react';
+import {
+  Menu,
+  X,
+  Home,
+  Building,
+  Users,
+  Phone,
+  Heart,
+  ShoppingCart,
+  Sun,
+  Moon,
+} from 'lucide-react';
 
 import Navlink from './buttons/Navlink';
 import AuthButton from './buttons/AuthButton';
@@ -31,8 +42,13 @@ const MobileNavLink = ({ href, icon: Icon, children, onClick }) => {
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
@@ -41,6 +57,13 @@ const Navbar = () => {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'night' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
 
   const navLinks = [
     { name: 'Home', href: '/', icon: Home },
@@ -54,7 +77,7 @@ const Navbar = () => {
       {/* Navbar */}
       <header
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          isScrolled ? 'bg-base-100/90 backdrop-blur-lg shadow-md' : 'bg-base-100'
+          isScrolled ? 'bg-base-100/95 backdrop-blur-lg shadow-md' : 'bg-transparent'
         }`}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,8 +102,15 @@ const Navbar = () => {
               ))}
             </nav>
 
-            {/* Desktop Action Icons & Auth Button */}
+            {/* Desktop Auth Button */}
             <div className="hidden md:flex items-center gap-2">
+              <button
+                onClick={toggleTheme}
+                className="btn btn-ghost btn-circle text-base-content/80 hover:text-primary transition-colors"
+                aria-label="Toggle Theme"
+              >
+                {theme === 'light' ? <Moon size={22} /> : <Sun size={22} />}
+              </button>
               <Link
                 href="/favorites"
                 className="btn btn-ghost btn-circle text-base-content/80 hover:text-primary transition-colors"
@@ -100,8 +130,15 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Mobile Action Icons & Menu Button */}
+            {/* Mobile Action Menu */}
             <div className="flex md:hidden items-center gap-1">
+              <button
+                onClick={toggleTheme}
+                className="btn btn-ghost btn-circle text-base-content/80"
+                aria-label="Toggle Theme"
+              >
+                {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+              </button>
               <Link
                 href="/favorites"
                 className="btn btn-ghost btn-circle text-base-content/80"
@@ -147,16 +184,16 @@ const Navbar = () => {
 
             {/* Mobile Auth Buttons */}
             <div className="pt-4 flex flex-col gap-3">
-              <button className="btn btn-outline rounded-full">Log In</button>
-
-              <button className="btn btn-primary rounded-full">Sign Up</button>
+              <button className="btn btn-ghost rounded-full w-full font-semibold border border-base-content/20 hover:bg-primary/10 hover:text-primary transition-colors">
+                Log In
+              </button>
+              <button className="btn btn-primary rounded-full w-full font-semibold shadow-lg shadow-primary/30 border-none text-white">
+                Sign Up
+              </button>
             </div>
           </div>
         </div>
       </header>
-
-      {/* Navbar Spacer */}
-      <div className="h-20"></div>
     </>
   );
 };
