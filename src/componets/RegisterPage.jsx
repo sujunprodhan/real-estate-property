@@ -70,11 +70,11 @@ const RegisterPage = () => {
       <div className="w-full max-w-5xl bg-base-200/60 backdrop-blur-xl border border-base-300/50 rounded-[2.5rem] sm:rounded-[3rem] shadow-2xl p-4 sm:p-6 flex flex-col lg:flex-row gap-6 relative overflow-hidden transition-colors duration-300">
         
         {/* Soft Ambient Vector Orb Inside Card */}
-        <div className="absolute top-[-20%] left-[-20%] w-[350px] h-[350px] rounded-full bg-primary/5 blur-[80px] pointer-events-none -z-10 animate-pulse"></div>
+        <div className="absolute top-[-20%] left-[-20%] w-350px h-350px rounded-full bg-primary/5 blur-[80px] pointer-events-none -z-10 animate-pulse"></div>
 
         {/* 1. VISUAL GRAPHIC BOARD WITH WIDGETS (With gorgeous slide-in animation & fallback background gradient) */}
         <div 
-          className={`w-full lg:w-[55%] relative aspect-[4/3] lg:aspect-auto rounded-[1.8rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm flex items-center justify-center group min-h-[360px] sm:min-h-[430px] lg:min-h-[580px] order-2 lg:order-1 bg-linear-to-br from-slate-900 via-slate-800 to-indigo-950 transition-all duration-1000 transform ${
+          className={`w-full lg:w-[55%] relative aspect-4/3 lg:aspect-auto rounded-[1.8rem] sm:rounded-[2.5rem] overflow-hidden shadow-sm flex items-center justify-center group min-h-360px sm:min-h-430px lg:min-h-580px order-2 lg:order-1 bg-linear-to-br from-slate-900 via-slate-800 to-indigo-950 transition-all duration-1000 transform ${
             mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
           }`}
         >
@@ -98,7 +98,7 @@ const RegisterPage = () => {
           </Link>
 
           {/* A. FLOATING STICKY THEME CARD (Top Left - Fully responsive scaling) */}
-          <div className="absolute top-4 left-4 sm:top-8 sm:left-8 bg-primary text-primary-content p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-xl max-w-[170px] sm:max-w-[210px] animate-bounce-slow z-10">
+          <div className="absolute top-4 left-4 sm:top-8 sm:left-8 bg-primary text-primary-content p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-xl max-w-170px sm:max-w-210px animate-bounce-slow z-10">
             <div className="flex items-center justify-between gap-3 mb-1">
               <span className="text-[8px] sm:text-[10px] font-extrabold uppercase tracking-wider opacity-80">Task Review</span>
               <div className="w-1.5 h-1.5 rounded-full bg-primary-content animate-ping"></div>

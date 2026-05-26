@@ -30,7 +30,7 @@ const Home = () => {
   ];
 
   return (
-    <div className={`relative w-full h-screen min-h-[700px] flex items-center overflow-hidden transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`relative w-full h-auto lg:h-screen min-h-[600px] sm:min-h-[700px] flex items-start pt-24 sm:pt-28 pb-20 lg:pb-0 lg:items-center lg:pt-0 overflow-hidden transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       
       {/* Swiper Background Slider with Fade Effect */}
       <div className="absolute inset-0 z-0 w-full h-full">
@@ -82,19 +82,22 @@ const Home = () => {
         </Swiper>
       </div>
 
-      <div className="container mx-auto px-6 lg:px-12 relative z-20 w-full mt-10 pointer-events-none">
+      <div className="container mx-auto px-6 lg:px-12 relative z-20 w-full mt-0 lg:mt-50 pointer-events-none">
+        {/* Ambient Soft Glow Orb */}
+        <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-gradient-to-tr from-primary/15 via-secondary/10 to-transparent rounded-full blur-3xl pointer-events-none -z-10 animate-pulse duration-10000"></div>
+
         <div className="max-w-3xl pointer-events-auto">
           {/* Animated Badge */}
           <div className={`transition-all duration-1000 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 text-primary border border-primary/30 backdrop-blur-md font-medium text-sm mb-6">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-primary/15 via-secondary/10 to-transparent text-primary border border-primary/20 hover:border-primary/40 backdrop-blur-md font-bold text-xs tracking-wider uppercase mb-6 transition-all duration-300">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-md shadow-primary"></span>
               Premium Real Estate Agency
             </span>
           </div>
 
           {/* Animated Heading */}
-          <h1 className={`text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-white mb-6 transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            Find Your <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary">Dream Home</span> <br />With Confidence
+          <h1 className={`text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight text-white mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)] transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            Find Your <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-indigo-400 to-secondary drop-shadow-sm">Dream Home</span> <br />With Confidence
           </h1>
 
           {/* Animated Subheading */}
@@ -103,40 +106,40 @@ const Home = () => {
           </p>
 
           {/* Search Glassmorphism Bar */}
-          <div className={`bg-base-100/20 backdrop-blur-xl border border-white/10 p-4 md:p-6 rounded-3xl shadow-2xl transition-all duration-1000 delay-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-            <div className="flex flex-col md:flex-row gap-4">
+          <div className={`bg-slate-950/40 backdrop-blur-xl border border-white/10 p-5 md:p-6 rounded-[2.5rem] shadow-2xl shadow-slate-950/50 transition-all duration-1000 delay-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+            <div className="flex flex-col md:flex-row gap-4 items-center">
               
               {/* Location Input */}
-              <div className="flex-1 flex items-center gap-3 bg-base-100/40 rounded-2xl p-3 border border-white/5 focus-within:border-primary transition-colors">
-                <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shrink-0">
+              <div className="w-full md:flex-1 h-16 flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-2xl px-4 border border-white/10 hover:border-primary/30 focus-within:border-primary/50 focus-within:bg-white/10 transition-all duration-300 shadow-inner">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/20">
                   <MapPin size={20} />
                 </div>
                 <div className="flex flex-col w-full">
-                  <label className="text-xs font-semibold text-white/60 uppercase tracking-wider">Location</label>
-                  <input type="text" placeholder="New York, USA" className="bg-transparent border-none outline-hidden text-white font-medium w-full placeholder:text-white/40" />
+                  <label className="text-[10px] font-bold text-white/50 uppercase tracking-widest leading-none mb-1">Location</label>
+                  <input type="text" placeholder="New York, USA" className="bg-transparent border-none outline-none text-white font-semibold w-full placeholder:text-white/30 h-6 py-0 text-sm focus:ring-0" />
                 </div>
               </div>
 
               {/* Property Type Input */}
-              <div className="flex-1 flex items-center gap-3 bg-base-100/40 rounded-2xl p-3 border border-white/5 focus-within:border-primary transition-colors">
-                <div className="w-10 h-10 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary shrink-0">
+              <div className="w-full md:flex-1 h-16 flex items-center gap-3 bg-white/5 backdrop-blur-md rounded-2xl px-4 border border-white/10 hover:border-secondary/30 focus-within:border-secondary/50 focus-within:bg-white/10 transition-all duration-300 shadow-inner">
+                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary shrink-0 border border-secondary/20">
                   <HomeIcon size={20} />
                 </div>
                 <div className="flex flex-col w-full">
-                  <label className="text-xs font-semibold text-white/60 uppercase tracking-wider">Property Type</label>
-                  <select className="bg-transparent border-none outline-hidden text-white font-medium w-full cursor-pointer" defaultValue="">
-                    <option value="" disabled className="bg-base-100 text-base-content">Select type</option>
-                    <option value="house" className="bg-base-100 text-base-content">Luxury House</option>
-                    <option value="apartment" className="bg-base-100 text-base-content">Modern Apartment</option>
-                    <option value="villa" className="bg-base-100 text-base-content">Beach Villa</option>
-                    <option value="penthouse" className="bg-base-100 text-base-content">Penthouse</option>
+                  <label className="text-[10px] font-bold text-white/50 uppercase tracking-widest leading-none mb-1">Property Type</label>
+                  <select className="bg-transparent border-none outline-none text-white font-semibold w-full cursor-pointer h-6 py-0 text-sm focus:ring-0" defaultValue="">
+                    <option value="" disabled className="bg-slate-950 text-white">Select type</option>
+                    <option value="house" className="bg-slate-950 text-white">Luxury House</option>
+                    <option value="apartment" className="bg-slate-950 text-white">Modern Apartment</option>
+                    <option value="villa" className="bg-slate-950 text-white">Beach Villa</option>
+                    <option value="penthouse" className="bg-slate-950 text-white">Penthouse</option>
                   </select>
                 </div>
               </div>
 
               {/* Search Button */}
-              <button className="btn btn-primary h-auto rounded-2xl px-8 hover:scale-105 transition-transform duration-300 shadow-lg shadow-primary/30 flex items-center gap-2 border-none">
-                <Search size={20} />
+              <button className="btn btn-primary h-16 rounded-2xl px-10 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-primary/30 flex items-center justify-center gap-2 border-none w-full md:w-auto shrink-0 font-extrabold text-sm tracking-wider uppercase bg-linear-to-r from-primary to-indigo-500 hover:from-primary hover:to-indigo-600 text-white">
+                <Search size={18} className="stroke-3" />
                 <span>Search</span>
               </button>
 
@@ -144,20 +147,20 @@ const Home = () => {
           </div>
           
           {/* Stats */}
-          <div className={`flex flex-wrap gap-8 mt-12 transition-all duration-1000 delay-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-            <div>
-              <p className="text-3xl font-bold text-white">1.5K+</p>
-              <p className="text-sm text-white/60 font-medium mt-1">Properties Ready</p>
+          <div className={`flex flex-wrap gap-8 mt-12 mb-5 lg:mb-20 transition-all duration-1000 delay-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="transition-transform duration-300 hover:scale-105">
+              <p className="text-3xl font-extrabold text-white drop-shadow-[0_2px_8px_rgba(255,255,255,0.15)]">1.5K+</p>
+              <p className="text-xs text-white/50 uppercase tracking-widest font-bold mt-1.5">Properties Ready</p>
             </div>
-            <div className="w-px h-12 bg-white/20 hidden md:block"></div>
-            <div>
-              <p className="text-3xl font-bold text-white">500+</p>
-              <p className="text-sm text-white/60 font-medium mt-1">Happy Customers</p>
+            <div className="w-px h-12 bg-white/10 hidden md:block"></div>
+            <div className="transition-transform duration-300 hover:scale-105">
+              <p className="text-3xl font-extrabold text-white drop-shadow-[0_2px_8px_rgba(255,255,255,0.15)]">500+</p>
+              <p className="text-xs text-white/50 uppercase tracking-widest font-bold mt-1.5">Happy Customers</p>
             </div>
-            <div className="w-px h-12 bg-white/20 hidden md:block"></div>
-            <div>
-              <p className="text-3xl font-bold text-white">50+</p>
-              <p className="text-sm text-white/60 font-medium mt-1">Expert Agents</p>
+            <div className="w-px h-12 bg-white/10 hidden md:block"></div>
+            <div className="transition-transform duration-300 hover:scale-105">
+              <p className="text-3xl font-extrabold text-white drop-shadow-[0_2px_8px_rgba(255,255,255,0.15)]">50+</p>
+              <p className="text-xs text-white/50 uppercase tracking-widest font-bold mt-1.5">Expert Agents</p>
             </div>
           </div>
 

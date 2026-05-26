@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Building, Home, Briefcase, Map, Layers } from 'lucide-react';
-import { getProduct } from '../actions/server/product';
+import { getProperty } from '../actions/server/property';
 
 const categoryIcons = {
   Villa: Building,
@@ -12,18 +12,20 @@ const categoryIcons = {
 };
 
 const CategorySection = async () => {
-  const products = await getProduct();
+  const properties = await getProperty();
 
   // Group products by category and find total counts and first product image
   const categoryMap = {};
 
-  products.forEach((product) => {
-    const catName = product.category || product.propertyType || 'Other';
+  properties.forEach((property) => {
+    const catName = property.category || property.propertyType || 'Other';
     if (!categoryMap[catName]) {
       categoryMap[catName] = {
         name: catName,
         count: 0,
-        image: product.images?.[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        image:
+          property.images?.[0] ||
+          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       };
     }
     categoryMap[catName].count += 1;
@@ -47,7 +49,7 @@ const CategorySection = async () => {
           </div>
           
           <Link 
-            href="/properties" 
+            href="/property" 
             className="btn btn-ghost text-primary hover:bg-primary/10 rounded-full font-bold px-6 py-2 self-start md:self-auto group flex items-center gap-2 transition-colors border border-primary/20"
           >
             View All Listings
@@ -62,7 +64,7 @@ const CategorySection = async () => {
             return (
               <Link 
                 key={cat.name} 
-                href={`/properties?category=${cat.name}`}
+                href={`/property?category=${cat.name}`}
                 className="group relative h-96 rounded-[2.5rem] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col justify-end p-6 border border-base-200 hover:-translate-y-2"
               >
                 {/* Background Image with Zoom on Hover */}
