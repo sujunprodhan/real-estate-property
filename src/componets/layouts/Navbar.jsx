@@ -40,9 +40,12 @@ const MobileNavLink = ({ href, icon: Icon, children, onClick }) => {
 };
 
 const Navbar = () => {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState('light');
+
+  const isSolid = isScrolled || pathname !== '/';
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -77,7 +80,7 @@ const Navbar = () => {
       {/* Navbar */}
       <header
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          isScrolled ? 'bg-base-100/95 backdrop-blur-lg shadow-md' : 'bg-transparent'
+          isSolid ? 'bg-base-100/95 backdrop-blur-lg shadow-md border-b border-base-200/50' : 'bg-transparent'
         }`}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,7 +99,7 @@ const Navbar = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
               {navLinks.map((link) => (
-                <Navlink key={link.name} href={link.href} scrolled={isScrolled}>
+                <Navlink key={link.name} href={link.href} scrolled={isSolid}>
                   {link.name}
                 </Navlink>
               ))}
@@ -107,7 +110,7 @@ const Navbar = () => {
               <button
                 onClick={toggleTheme}
                 className={`btn btn-ghost btn-circle hover:text-primary transition-colors ${
-                  isScrolled ? 'text-base-content/80' : 'text-white/80 hover:text-white'
+                  isSolid ? 'text-base-content/80' : 'text-white/80 hover:text-white'
                 }`}
                 aria-label="Toggle Theme"
               >
@@ -116,7 +119,7 @@ const Navbar = () => {
               <Link
                 href="/favorites"
                 className={`btn btn-ghost btn-circle hover:text-primary transition-colors ${
-                  isScrolled ? 'text-base-content/80' : 'text-white/80 hover:text-white'
+                  isSolid ? 'text-base-content/80' : 'text-white/80 hover:text-white'
                 }`}
                 aria-label="Favorites"
               >
@@ -125,14 +128,14 @@ const Navbar = () => {
               <Link
                 href="/cart"
                 className={`btn btn-ghost btn-circle hover:text-primary transition-colors ${
-                  isScrolled ? 'text-base-content/80' : 'text-white/80 hover:text-white'
+                  isSolid ? 'text-base-content/80' : 'text-white/80 hover:text-white'
                 }`}
                 aria-label="Cart"
               >
                 <ShoppingCart size={22} />
               </Link>
               <div className="ml-2">
-                <AuthButton scrolled={isScrolled} />
+                <AuthButton scrolled={isSolid} />
               </div>
             </div>
 
@@ -141,7 +144,7 @@ const Navbar = () => {
               <button
                 onClick={toggleTheme}
                 className={`btn btn-ghost btn-circle ${
-                  isScrolled ? 'text-base-content/80' : 'text-white/80'
+                  isSolid ? 'text-base-content/80' : 'text-white/80'
                 }`}
                 aria-label="Toggle Theme"
               >
@@ -150,7 +153,7 @@ const Navbar = () => {
               <Link
                 href="/favorites"
                 className={`btn btn-ghost btn-circle ${
-                  isScrolled ? 'text-base-content/80' : 'text-white/80'
+                  isSolid ? 'text-base-content/80' : 'text-white/80'
                 }`}
                 aria-label="Favorites"
               >
@@ -159,7 +162,7 @@ const Navbar = () => {
               <Link
                 href="/cart"
                 className={`btn btn-ghost btn-circle ${
-                  isScrolled ? 'text-base-content/80' : 'text-white/80'
+                  isSolid ? 'text-base-content/80' : 'text-white/80'
                 }`}
                 aria-label="Cart"
               >
@@ -168,7 +171,7 @@ const Navbar = () => {
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className={`btn btn-ghost btn-circle ${
-                  isScrolled ? 'text-base-content/80' : 'text-white/80'
+                  isSolid ? 'text-base-content/80' : 'text-white/80'
                 }`}
                 aria-label="Toggle Menu"
               >

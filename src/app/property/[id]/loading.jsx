@@ -9,7 +9,7 @@ export default function Loading() {
         {/* Breadcrumb Skeleton */}
         <div className="h-5 w-48 bg-base-300/60 rounded-lg mb-8"></div>
 
-        {/* Hero Grid / Image Gallery Skeleton */}
+        {/* Image Gallery Skeleton */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {/* Main Large Image */}
           <div className="md:col-span-2 h-[400px] md:h-[500px] bg-base-300/50 rounded-3xl"></div>
@@ -32,9 +32,8 @@ export default function Loading() {
 
         {/* Main Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* Left Columns: Specs & Details */}
+          {/* Left Columns */}
           <div className="lg:col-span-2 space-y-10">
-            {/* Title & Location Card */}
             <div className="bg-base-100 rounded-3xl p-8 border border-base-200 shadow-md space-y-4">
               <div className="h-10 w-3/4 bg-base-300/60 rounded-2xl"></div>
               <div className="flex items-center gap-2">
@@ -70,7 +69,7 @@ export default function Loading() {
             </div>
           </div>
 
-          {/* Right Column: Agent & Call To Action */}
+          {/* Right Column */}
           <div className="space-y-8">
             {/* Agent Info Card */}
             <div className="bg-base-100 rounded-3xl p-8 border border-base-200 shadow-md flex flex-col items-center text-center space-y-4">

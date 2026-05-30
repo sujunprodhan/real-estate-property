@@ -23,7 +23,7 @@ const RegisterPage = () => {
   const [weekDates, setWeekDates] = useState([]);
   const [currentDayIndex, setCurrentDayIndex] = useState(-1);
 
-  // Trigger smooth entrance animation and compute real-time dates on component mount
+  
   useEffect(() => {
     setMounted(true);
 
