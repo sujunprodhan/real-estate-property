@@ -4,12 +4,15 @@ import AgentContactSection from '../componets/AgentContactSection';
 import HomeExtraSections from '../componets/HomeExtraSections';
 import Property from '../componets/Property';
 
-export default function Home() {
+export default async function Home({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
+  const page = parseInt(resolvedSearchParams?.page || '1', 10);
+
   return (
     <div className="w-full overflow-hidden">
       <HomeHero />
       <CategorySection />
-     <Property></Property>
+      <Property showSidebar={false} page={page} limit={6}></Property>
       <HomeExtraSections />
       <AgentContactSection />
     </div>

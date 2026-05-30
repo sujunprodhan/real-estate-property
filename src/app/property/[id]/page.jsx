@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, BedDouble, Bath, Square, Mail, Phone, CheckCircle } from 'lucide-react';
 import { getSingleProperty } from '../../../actions/server/property';
+import PropertyTabs from '../../../componets/PropertyTabs';
 
 const ProductDetails = async ({ params }) => {
   const { id } = await params;
@@ -142,29 +143,11 @@ const ProductDetails = async ({ params }) => {
               </div>
             </div>
 
-            {/* Description */}
-            <div className="bg-base-100 rounded-3xl p-8 border border-base-200 shadow-md">
-              <h3 className="text-2xl font-bold text-base-content mb-4">About This Property</h3>
-              <p className="text-base-content/70 text-lg leading-relaxed whitespace-pre-line">
-                {property.description}
-              </p>
-            </div>
-
-            {/* Amenities */}
-            <div className="bg-base-100 rounded-3xl p-8 border border-base-200 shadow-md">
-              <h3 className="text-2xl font-bold text-base-content mb-6">Premium Amenities</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {property.amenities?.map((amenity, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 bg-base-200/40 rounded-xl p-4 border border-base-200/50"
-                  >
-                    <CheckCircle size={20} className="text-success shrink-0" />
-                    <span className="text-base-content font-semibold text-[15px]">{amenity}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Interactive Description & Reviews Tabs */}
+            <PropertyTabs 
+              description={property.description} 
+              amenities={property.amenities}
+            />
           </div>
 
           {/* Right / Sidebar Column */}

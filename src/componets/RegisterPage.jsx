@@ -20,10 +20,25 @@ const RegisterPage = () => {
   const [mounted, setMounted] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [weekDates, setWeekDates] = useState([]);
+  const [currentDayIndex, setCurrentDayIndex] = useState(-1);
 
-  // Trigger smooth entrance animation on component mount
+  // Trigger smooth entrance animation and compute real-time dates on component mount
   useEffect(() => {
     setMounted(true);
+
+    const today = new Date();
+    const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
+    setCurrentDayIndex(currentDay);
+
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const diff = i - currentDay;
+      const dayDate = new Date(today);
+      dayDate.setDate(today.getDate() + diff);
+      dates.push(dayDate.getDate());
+    }
+    setWeekDates(dates);
   }, []);
 
   const { 
@@ -114,7 +129,8 @@ const RegisterPage = () => {
           <div className="absolute bottom-20 sm:bottom-32 left-4 right-4 sm:left-8 sm:right-8 bg-slate-950/40 backdrop-blur-md border border-white/10 p-3.5 sm:p-5 rounded-2xl sm:rounded-[2rem] shadow-2xl z-10">
             <div className="grid grid-cols-7 gap-1.5 sm:gap-2 text-center">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => {
-                const isActive = day === 'Wed' || i === 3;
+                const isActive = currentDayIndex === -1 ? (day === 'Wed' || i === 3) : (i === currentDayIndex);
+                const dateVal = weekDates[i] || (22 + i);
                 return (
                   <div key={day} className="flex flex-col items-center gap-1.5">
                     <span className="text-[8px] sm:text-[9px] font-bold tracking-wider text-slate-300 opacity-60 uppercase">{day}</span>
@@ -123,7 +139,7 @@ const RegisterPage = () => {
                         ? 'bg-linear-to-br from-primary to-indigo-500 text-white font-black shadow-lg shadow-primary/30 scale-105 border border-primary/20' 
                         : 'text-white/70 font-semibold hover:bg-white/10 hover:text-white cursor-pointer'
                     }`}>
-                      {22 + i}
+                      {dateVal}
                     </span>
                   </div>
                 );
