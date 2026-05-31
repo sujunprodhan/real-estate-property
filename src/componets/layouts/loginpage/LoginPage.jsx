@@ -13,8 +13,15 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+import Swal from 'sweetalert2';
 
 const LoginPage = () => {
+  const router = useRouter();
+  const params = useSearchParams();
+  const callbackUrl = params.get('callbackUrl') || '/';
+
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -50,16 +57,45 @@ const LoginPage = () => {
     }
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setLoading(true);
-    console.log('Login Form Data:', data);
-    
-    // Mimicking network lag to show loading state beautifully
-    setTimeout(() => {
+    try {
+      const loginResult = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+        callbackUrl: callbackUrl,
+      });
+
+      if (loginResult?.ok) {
+        await Swal.fire({
+          icon: 'success',
+          title: 'Login Successful!',
+          text: 'Welcome back to EstateEase.',
+          confirmButtonColor: '#10b981',
+        });
+        router.push(callbackUrl);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: 'Invalid credentials. Please check your email and password.',
+          confirmButtonColor: '#ef4444',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred.',
+        confirmButtonColor: '#ef4444',
+      });
+    } finally {
       setLoading(false);
-      alert('Login Verified Successfully!');
-    }, 1500);
+    }
   };
+
 
   return (
     <div className="min-h-screen w-full bg-linear-to-br from-base-100 via-base-200 to-base-300/40 flex flex-col justify-start items-center p-4 sm:p-6 md:p-10 pt-32 sm:pt-36 md:pt-40 pb-20 overflow-hidden transition-colors duration-300">

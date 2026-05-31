@@ -1,9 +1,10 @@
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
 import { MapPin, BedDouble, Bath, Square, Mail, Phone, CheckCircle } from 'lucide-react';
 import { getSingleProperty } from '../../../actions/server/property';
 import PropertyTabs from '../../../componets/PropertyTabs';
+import AddBooking from '../../../componets/layouts/buttons/AddBooking';
 
 const ProductDetails = async ({ params }) => {
   const { id } = await params;
@@ -144,15 +145,36 @@ const ProductDetails = async ({ params }) => {
             </div>
 
             {/* Interactive Description & Reviews Tabs */}
-            <PropertyTabs 
-              description={property.description} 
-              amenities={property.amenities}
-            />
+            <PropertyTabs description={property.description} amenities={property.amenities} />
           </div>
 
           {/* Right / Sidebar Column */}
           <div className="space-y-8">
+            {/* Booking / Action Card */}
+            <div className="bg-primary text-primary-content rounded-3xl p-8 shadow-xl relative overflow-hidden">
+              <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+              <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+
+              <h3 className="text-2xl font-black mb-4">Schedule a Visit</h3>
+              <p className="text-primary-content/85 text-[15px] leading-relaxed mb-6">
+                Interested in viewing this spectacular property in person? Request a private showing
+                with our agent today.
+              </p>
+
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 mb-6">
+                <div className="flex justify-between items-center text-sm font-bold">
+                  <span>Booking Status</span>
+                  <span className="bg-emerald-500 text-white text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">
+                    {property.booking?.bookingStatus || 'Available'}
+                  </span>
+                </div>
+              </div>
+
+              <AddBooking property={property}></AddBooking>
+            </div>
+
             {/* Agent Info Card */}
+
             <div className="bg-base-100 rounded-3xl p-8 border border-base-200 shadow-lg relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl"></div>
 
@@ -201,31 +223,6 @@ const ProductDetails = async ({ params }) => {
                   <span>{property.agent?.phone || '+1 (555) 000-0000'}</span>
                 </a>
               </div>
-            </div>
-
-            {/* Booking / Action Card */}
-            <div className="bg-primary text-primary-content rounded-3xl p-8 shadow-xl relative overflow-hidden">
-              <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-              <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-
-              <h3 className="text-2xl font-black mb-4">Schedule a Visit</h3>
-              <p className="text-primary-content/85 text-[15px] leading-relaxed mb-6">
-                Interested in viewing this spectacular property in person? Request a private showing
-                with our agent today.
-              </p>
-
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 mb-6">
-                <div className="flex justify-between items-center text-sm font-bold">
-                  <span>Booking Status</span>
-                  <span className="bg-emerald-500 text-white text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">
-                    {property.booking?.bookingStatus || 'Available'}
-                  </span>
-                </div>
-              </div>
-
-              <button className="btn bg-white hover:bg-neutral-100 text-primary w-full rounded-2xl font-bold border-none shadow-lg text-[16px] h-14">
-                Book a Showing
-              </button>
             </div>
           </div>
         </div>
