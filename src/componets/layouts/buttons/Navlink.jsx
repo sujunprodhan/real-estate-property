@@ -16,6 +16,7 @@ const Navlink = ({ href, children, scrolled }) => {
   return (
     <Link
       href={href}
+      prefetch={false}
       className={`relative group px-4 py-2 font-bold transition-colors duration-300 ${textClass}`}
     >
       <span className="relative z-10">{children}</span>

@@ -2,9 +2,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 
-import Navbar from "../componets/layouts/Navbar";
-import Footer from "../componets/layouts/Footer";
 import NextAuthProvider from "../provider/NextAuthProvider";
+import LayoutWrapper from "../provider/LayoutWrapper";
 
 
 
@@ -57,15 +56,10 @@ export default function RootLayout({ children }) {
             style={{ animationDuration: '5s', animationDelay: '1s' }}
           ></div>
 
-          <Navbar />
-
-          <main className="flex-1 w-full relative z-0">{children}</main>
-
-          <footer className="w-full relative z-10">
-            <Footer />
-          </footer>
+          <LayoutWrapper>{children}</LayoutWrapper>
         </body>
       </html>
     </NextAuthProvider>
   );
 }
+
