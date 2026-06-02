@@ -10,7 +10,7 @@ const agents = [
     role: 'Principal Broker & Founder',
     email: 'sarah.j@realestate.com',
     phone: '+1 (555) 123-4567',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://i.ibb.co.com/qFN76sbV/Sarah-Jenkins.webp',
     specialty: 'Oceanfront Luxury & Villas',
   },
   {
@@ -18,7 +18,7 @@ const agents = [
     role: 'Senior Investment Analyst',
     email: 'm.chen@realestate.com',
     phone: '+1 (555) 987-6543',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://i.ibb.co.com/mCwPTtX4/Michael-Chen.webp',
     specialty: 'High-yield Commercial Properties',
   },
   {
@@ -26,7 +26,7 @@ const agents = [
     role: 'Client Relations Manager',
     email: 'emma.w@realestate.com',
     phone: '+1 (555) 456-7890',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://i.ibb.co.com/PGDBmVNH/Emma-Watson.webp',
     specialty: 'Residential Estates & Relocation',
   },
   {
@@ -34,7 +34,7 @@ const agents = [
     role: 'Land Development Consultant',
     email: 'david.m@realestate.com',
     phone: '+1 (555) 789-0123',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://i.ibb.co.com/cKmYF3cv/David-Martinez.webp',
     specialty: 'Acreage, Plots & Development Land',
   },
 ];

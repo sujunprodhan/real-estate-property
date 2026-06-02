@@ -25,7 +25,7 @@ const agentsList = [
     role: 'Principal Broker & Founder',
     email: 'sarah.j@realestate.com',
     phone: '+1 (555) 123-4567',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://i.ibb.co.com/qFN76sbV/Sarah-Jenkins.webp',
     specialty: 'Luxury',
     specialtyLabel: 'Oceanfront Luxury & Villas',
     experience: '12+ Years Experience',
@@ -36,7 +36,7 @@ const agentsList = [
     role: 'Senior Investment Analyst',
     email: 'm.chen@realestate.com',
     phone: '+1 (555) 987-6543',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://i.ibb.co.com/mCwPTtX4/Michael-Chen.webp',
     specialty: 'Commercial',
     specialtyLabel: 'High-yield Commercial Properties',
     experience: '9+ Years Experience',
@@ -47,7 +47,7 @@ const agentsList = [
     role: 'Client Relations Manager',
     email: 'emma.w@realestate.com',
     phone: '+1 (555) 456-7890',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://i.ibb.co.com/PGDBmVNH/Emma-Watson.webp',
     specialty: 'Residential',
     specialtyLabel: 'Residential Estates & Relocation',
     experience: '7+ Years Experience',
@@ -58,7 +58,7 @@ const agentsList = [
     role: 'Land Development Consultant',
     email: 'david.m@realestate.com',
     phone: '+1 (555) 789-0123',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://i.ibb.co.com/cKmYF3cv/David-Martinez.webp',
     specialty: 'Land',
     specialtyLabel: 'Acreage, Plots & Development Land',
     experience: '15+ Years Experience',
@@ -68,38 +68,41 @@ const agentsList = [
 
 const testimonials = [
   {
-    quote: "Sarah helped us secure our oceanfront villa effortlessly. Her negotiation intelligence is second to none.",
-    author: "Richard & Clara Vance",
-    role: "Vance Enterprises CEO",
-    agent: "Sarah Jenkins",
+    quote:
+      'Sarah helped us secure our oceanfront villa effortlessly. Her negotiation intelligence is second to none.',
+    author: 'Richard & Clara Vance',
+    role: 'Vance Enterprises CEO',
+    agent: 'Sarah Jenkins',
   },
   {
-    quote: "Michael's yield calculations for our shopping plaza acquisition were perfectly accurate. Truly outstanding service.",
-    author: "Jonathan Pierce",
-    role: "Real Estate Investor",
-    agent: "Michael Chen",
+    quote:
+      "Michael's yield calculations for our shopping plaza acquisition were perfectly accurate. Truly outstanding service.",
+    author: 'Jonathan Pierce',
+    role: 'Real Estate Investor',
+    agent: 'Michael Chen',
   },
   {
-    quote: "Emma Watson turned what could have been a highly stressful relocation into an absolute dream. 5 stars!",
-    author: "Sophia Laurent",
-    role: "International Client",
-    agent: "Emma Watson",
+    quote:
+      'Emma Watson turned what could have been a highly stressful relocation into an absolute dream. 5 stars!',
+    author: 'Sophia Laurent',
+    role: 'International Client',
+    agent: 'Emma Watson',
   },
 ];
 
 const faqs = [
   {
-    q: "How do I choose the best agent for my property requirements?",
-    a: "Our agents specialize in different niches. Sarah handles luxury beach properties, Michael handles multi-million dollar portfolios and commercial investments, Emma manages residential relocations, and David coordinates land development and building acreage acquisitions."
+    q: 'How do I choose the best agent for my property requirements?',
+    a: 'Our agents specialize in different niches. Sarah handles luxury beach properties, Michael handles multi-million dollar portfolios and commercial investments, Emma manages residential relocations, and David coordinates land development and building acreage acquisitions.',
   },
   {
-    q: "Are scheduled tours free of charge?",
-    a: "Yes! All scheduled showing tours and initial portfolio consultations with our agents are entirely free of charge for registered investors."
+    q: 'Are scheduled tours free of charge?',
+    a: 'Yes! All scheduled showing tours and initial portfolio consultations with our agents are entirely free of charge for registered investors.',
   },
   {
-    q: "How fast will an agent reply to my inquiry?",
-    a: "Our customer service standard dictates that our agents must reply within 24 hours of receiving an inquiry from our online form."
-  }
+    q: 'How fast will an agent reply to my inquiry?',
+    a: 'Our customer service standard dictates that our agents must reply within 24 hours of receiving an inquiry from our online form.',
+  },
 ];
 
 const AgentsPage = () => {
@@ -109,9 +112,10 @@ const AgentsPage = () => {
 
   const specialties = ['All', 'Luxury', 'Commercial', 'Residential', 'Land'];
 
-  const filteredAgents = agentsList.filter(agent => {
-    const matchesSearch = agent.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          agent.specialtyLabel.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredAgents = agentsList.filter((agent) => {
+    const matchesSearch =
+      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.specialtyLabel.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesSpecialty = selectedSpecialty === 'All' || agent.specialty === selectedSpecialty;
     return matchesSearch && matchesSpecialty;
   });
@@ -120,10 +124,12 @@ const AgentsPage = () => {
     <main className="min-h-screen bg-base-300 pt-32 pb-24 text-base-content relative overflow-hidden">
       {/* Ambient background glows */}
       <div className="absolute top-[5%] left-[-15%] w-[600px] h-[600px] rounded-full bg-primary/5 blur-[150px] pointer-events-none -z-10 animate-pulse"></div>
-      <div className="absolute bottom-[10%] right-[-15%] w-[700px] h-[700px] rounded-full bg-secondary/5 blur-[180px] pointer-events-none -z-10 animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+      <div
+        className="absolute bottom-[10%] right-[-15%] w-[700px] h-[700px] rounded-full bg-secondary/5 blur-[180px] pointer-events-none -z-10 animate-pulse"
+        style={{ animationDelay: '1.5s' }}
+      ></div>
 
       <div className="container mx-auto px-6 lg:px-12">
-        
         {/* ================= HERO & SEARCH ================= */}
         <div className="mb-16 text-center max-w-3xl mx-auto space-y-4">
           <span className="text-primary font-black tracking-widest uppercase text-xs bg-primary/10 px-3.5 py-2 rounded-full inline-block">
@@ -134,13 +140,17 @@ const AgentsPage = () => {
           </h1>
           <div className="h-1.5 w-24 bg-primary mx-auto rounded-full my-4"></div>
           <p className="text-base-content/70 text-sm md:text-base leading-relaxed">
-            Connect with certified property strategists who will help you find premium villas, high-yield retail hubs, and premium residential estates.
+            Connect with certified property strategists who will help you find premium villas,
+            high-yield retail hubs, and premium residential estates.
           </p>
 
           {/* Interactive Search & Filter bar */}
           <div className="pt-6 flex flex-col md:flex-row gap-4 max-w-2xl mx-auto items-center">
             <div className="relative w-full">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40" size={18} />
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/40"
+                size={18}
+              />
               <input
                 type="text"
                 placeholder="Search advisor by name or specialty..."
@@ -149,15 +159,15 @@ const AgentsPage = () => {
                 className="input input-bordered w-full pl-11 rounded-2xl bg-base-200/60 border-base-100 focus:outline-none focus:ring-2 focus:ring-primary/40 font-bold"
               />
             </div>
-            
+
             <div className="flex gap-2 overflow-x-auto w-full md:w-auto py-1 scrollbar-thin">
-              {specialties.map(spec => (
+              {specialties.map((spec) => (
                 <button
                   key={spec}
                   onClick={() => setSelectedSpecialty(spec)}
                   className={`btn btn-xs rounded-full font-black px-4.5 py-2.5 h-auto uppercase transition-all shrink-0 ${
-                    selectedSpecialty === spec 
-                      ? 'btn-primary text-white border-none' 
+                    selectedSpecialty === spec
+                      ? 'btn-primary text-white border-none'
                       : 'bg-base-200 text-base-content/75 hover:bg-base-100 hover:text-primary border-none'
                   }`}
                 >
@@ -254,7 +264,9 @@ const AgentsPage = () => {
           <div className="text-center py-20 bg-base-200/30 rounded-[2.5rem] mb-24 border border-base-100/30 max-w-xl mx-auto">
             <span className="text-primary text-4xl block mb-4">🔍</span>
             <h3 className="text-xl font-black uppercase text-base-content">No Specialists Found</h3>
-            <p className="text-xs font-bold text-base-content/50 mt-2">Try adjusting your search criteria or changing specialty tags.</p>
+            <p className="text-xs font-bold text-base-content/50 mt-2">
+              Try adjusting your search criteria or changing specialty tags.
+            </p>
           </div>
         )}
 
@@ -267,28 +279,36 @@ const AgentsPage = () => {
                 <TrendingUp size={22} className="stroke-[2.5]" />
               </div>
               <h4 className="text-4xl font-black text-base-content tracking-tight">$2.4B+</h4>
-              <p className="text-xs font-bold text-base-content/50 uppercase tracking-widest">Total Volume Closed</p>
+              <p className="text-xs font-bold text-base-content/50 uppercase tracking-widest">
+                Total Volume Closed
+              </p>
             </div>
             <div className="space-y-2">
               <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mx-auto mb-4">
                 <Users size={22} className="stroke-[2.5]" />
               </div>
               <h4 className="text-4xl font-black text-base-content tracking-tight">98.6%</h4>
-              <p className="text-xs font-bold text-base-content/50 uppercase tracking-widest">Investor Satisfaction</p>
+              <p className="text-xs font-bold text-base-content/50 uppercase tracking-widest">
+                Investor Satisfaction
+              </p>
             </div>
             <div className="space-y-2">
               <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mx-auto mb-4">
                 <Compass size={22} className="stroke-[2.5]" />
               </div>
               <h4 className="text-4xl font-black text-base-content tracking-tight">150+</h4>
-              <p className="text-xs font-bold text-base-content/50 uppercase tracking-widest">Prime Micro-locations</p>
+              <p className="text-xs font-bold text-base-content/50 uppercase tracking-widest">
+                Prime Micro-locations
+              </p>
             </div>
             <div className="space-y-2">
               <div className="w-12 h-12 rounded-2xl bg-success/10 flex items-center justify-center text-success mx-auto mb-4">
                 <CheckCircle2 size={22} className="stroke-[2.5]" />
               </div>
               <h4 className="text-4xl font-black text-base-content tracking-tight">24/7</h4>
-              <p className="text-xs font-bold text-base-content/50 uppercase tracking-widest">Executive Support</p>
+              <p className="text-xs font-bold text-base-content/50 uppercase tracking-widest">
+                Executive Support
+              </p>
             </div>
           </div>
         </section>
@@ -296,9 +316,16 @@ const AgentsPage = () => {
         {/* ================= TESTIMONIALS SECTION ================= */}
         <section className="mb-28">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <span className="text-primary font-black uppercase text-xs tracking-widest">Global Reviews</span>
-            <h3 className="text-3xl md:text-4xl font-black text-base-content tracking-tight uppercase">Investor Testimonials</h3>
-            <p className="text-xs font-bold text-base-content/65 leading-relaxed">Here is what premium estate buyers and retail syndicators say about our team's guidance.</p>
+            <span className="text-primary font-black uppercase text-xs tracking-widest">
+              Global Reviews
+            </span>
+            <h3 className="text-3xl md:text-4xl font-black text-base-content tracking-tight uppercase">
+              Investor Testimonials
+            </h3>
+            <p className="text-xs font-bold text-base-content/65 leading-relaxed">
+              Here is what premium estate buyers and retail syndicators say about our team's
+              guidance.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -320,10 +347,12 @@ const AgentsPage = () => {
                     "{testi.quote}"
                   </p>
                 </div>
-                
+
                 <div className="mt-8 pt-5 border-t border-base-content/5 flex flex-col">
                   <span className="text-sm font-black text-base-content">{testi.author}</span>
-                  <span className="text-xs font-bold text-base-content/50 mt-0.5">{testi.role}</span>
+                  <span className="text-xs font-bold text-base-content/50 mt-0.5">
+                    {testi.role}
+                  </span>
                   <span className="text-[10px] font-black text-primary uppercase mt-2.5 bg-primary/10 py-1 px-3 rounded-full self-start">
                     Consulted {testi.agent.split(' ')[0]}
                   </span>
@@ -336,9 +365,15 @@ const AgentsPage = () => {
         {/* ================= FAQ SECTION ================= */}
         <section className="max-w-4xl mx-auto">
           <div className="text-center mb-16 space-y-3">
-            <span className="text-primary font-black uppercase text-xs tracking-widest">Common Inquiries</span>
-            <h3 className="text-3xl md:text-4xl font-black text-base-content tracking-tight uppercase">Frequently Asked Questions</h3>
-            <p className="text-xs font-bold text-base-content/65">Get quick answers regarding scheduled walkthrough tours and consultancy parameters.</p>
+            <span className="text-primary font-black uppercase text-xs tracking-widest">
+              Common Inquiries
+            </span>
+            <h3 className="text-3xl md:text-4xl font-black text-base-content tracking-tight uppercase">
+              Frequently Asked Questions
+            </h3>
+            <p className="text-xs font-bold text-base-content/65">
+              Get quick answers regarding scheduled walkthrough tours and consultancy parameters.
+            </p>
           </div>
 
           <div className="space-y-4">
@@ -361,7 +396,9 @@ const AgentsPage = () => {
                   </button>
                   <div
                     className={`transition-all duration-300 ease-in-out ${
-                      isOpen ? 'max-h-[300px] border-t border-base-content/5 p-6 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+                      isOpen
+                        ? 'max-h-[300px] border-t border-base-content/5 p-6 opacity-100'
+                        : 'max-h-0 opacity-0 overflow-hidden'
                     }`}
                   >
                     <p className="text-sm font-semibold text-base-content/75 leading-relaxed">
@@ -373,7 +410,6 @@ const AgentsPage = () => {
             })}
           </div>
         </section>
-
       </div>
     </main>
   );
