@@ -78,6 +78,18 @@ const AuthButton = ({ scrolled }) => {
             </Link>
           </li>
 
+          {/* Admin Dashboard Option */}
+          {session.user.role === 'admin' && (
+            <li>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-accent bg-accent/15 hover:bg-accent hover:text-accent-content transition-all"
+              >
+                Admin Dashboard
+              </Link>
+            </li>
+          )}
+
           {/* Log Out Option */}
           <li>
             <button

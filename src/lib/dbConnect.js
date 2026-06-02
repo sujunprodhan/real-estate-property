@@ -6,6 +6,8 @@ const dbName = process.env.MONGODB_NAME;
 export const Collections = {
   PROPERTY: 'property',
   USER: 'user',
+  BOOKING: 'booking',
+  FAVORITE: 'favorite',
 };
 
 const client = new MongoClient(uri, {

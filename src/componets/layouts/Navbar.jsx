@@ -18,6 +18,8 @@ import {
 
 import Navlink from './buttons/Navlink';
 import AuthButton from './buttons/AuthButton';
+import { useSession } from 'next-auth/react';
+import { getFavorites } from '../../actions/server/favorite';
 
 const MobileNavLink = ({ href, icon: Icon, children, onClick }) => {
   const pathname = usePathname();
@@ -47,6 +49,22 @@ const Navbar = () => {
 
   const isSolid = isScrolled || pathname !== '/';
 
+  const { data: session } = useSession();
+  const [favCount, setFavCount] = useState(0);
+
+  const fetchFavCount = async () => {
+    if (session?.user?.email) {
+      try {
+        const favs = await getFavorites(session.user.email);
+        setFavCount(favs.length);
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      setFavCount(0);
+    }
+  };
+
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light';
     setTheme(savedTheme);
@@ -57,9 +75,15 @@ const Navbar = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
+    fetchFavCount();
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    window.addEventListener('favorites-updated', fetchFavCount);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('favorites-updated', fetchFavCount);
+    };
+  }, [session]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'night' : 'light';
@@ -117,13 +141,18 @@ const Navbar = () => {
                 {theme === 'light' ? <Moon size={22} /> : <Sun size={22} />}
               </button>
               <Link
-                href="/favorites"
-                className={`btn btn-ghost btn-circle hover:text-primary transition-colors ${
+                href="/profile?tab=properties"
+                className={`btn btn-ghost btn-circle hover:text-primary relative transition-colors ${
                   isSolid ? 'text-base-content/80' : 'text-white/80 hover:text-white'
                 }`}
                 aria-label="Favorites"
               >
                 <Heart size={22} />
+                {favCount > 0 && (
+                  <span className="badge badge-sm badge-accent absolute -top-1 -right-1 font-black scale-90 border-none px-1.5 py-0.5 animate-bounce">
+                    {favCount}
+                  </span>
+                )}
               </Link>
               <Link
                 href="/cart"
@@ -151,13 +180,18 @@ const Navbar = () => {
                 {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
               </button>
               <Link
-                href="/favorites"
-                className={`btn btn-ghost btn-circle ${
+                href="/profile?tab=properties"
+                className={`btn btn-ghost btn-circle relative ${
                   isSolid ? 'text-base-content/80' : 'text-white/80'
                 }`}
                 aria-label="Favorites"
               >
                 <Heart size={20} />
+                {favCount > 0 && (
+                  <span className="badge badge-xs badge-accent absolute top-1 right-1 font-black scale-95 border-none px-1 py-0.5">
+                    {favCount}
+                  </span>
+                )}
               </Link>
               <Link
                 href="/cart"

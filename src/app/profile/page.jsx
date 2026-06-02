@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { getBookings, deleteBooking, getAllBookings, updateBookingStatus } from '../../actions/server/booking';
+import { getFavorites, toggleFavorite } from '../../actions/server/favorite';
 import {
   User,
   Building,
@@ -35,6 +37,17 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const isAdmin = session?.user?.role === 'admin';
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab) {
+        setActiveTab(tab);
+      }
+    }
+  }, []);
 
   // Form states for settings
   const [profileForm, setProfileForm] = useState({
@@ -44,62 +57,11 @@ const ProfilePage = () => {
     bio: 'Luxury real estate investor and architecture enthusiast.',
   });
 
-  // Mock initial properties
-  const [savedProperties, setSavedProperties] = useState([
-    {
-      id: 'p1',
-      title: 'The Obsidian Grand Penthouse',
-      price: '$4,850,000',
-      location: '72 Park Ave, New York, NY',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600',
-      beds: 4,
-      baths: 4.5,
-      sqft: 5200,
-      type: 'Penthouse',
-    },
-    {
-      id: 'p2',
-      title: 'Serene Waters Modern Villa',
-      price: '$6,200,000',
-      location: 'Sunset Drive, Miami Beach, FL',
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=600',
-      beds: 5,
-      baths: 6,
-      sqft: 6800,
-      type: 'Villa',
-    },
-    {
-      id: 'p3',
-      title: 'Echo Canyon Glass Estate',
-      price: '$3,400,000',
-      location: 'Camelback Mtn, Phoenix, AZ',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=600',
-      beds: 3,
-      baths: 3.5,
-      sqft: 4100,
-      type: 'Modern House',
-    },
-  ]);
+  // Saved properties list (starts empty by default)
+  const [savedProperties, setSavedProperties] = useState([]);
 
-  // Mock initial viewings
-  const [viewings, setViewings] = useState([
-    {
-      id: 'v1',
-      propertyTitle: 'The Obsidian Grand Penthouse',
-      agent: 'Marcus Vance',
-      date: 'June 05, 2026',
-      time: '10:00 AM',
-      status: 'Confirmed',
-    },
-    {
-      id: 'v2',
-      propertyTitle: 'Serene Waters Modern Villa',
-      agent: 'Elena Rostova',
-      date: 'June 12, 2026',
-      time: '03:30 PM',
-      status: 'Pending',
-    },
-  ]);
+  // Dynamic viewings from database
+  const [viewings, setViewings] = useState([]);
 
   // Mock inbox messages
   const [messages, setMessages] = useState([
@@ -131,8 +93,50 @@ const ProfilePage = () => {
         email: session.user.email || '',
       }));
       setAvatarPreview(session.user.image || null);
+
+      const fetchBookings = async () => {
+        try {
+          const userBookings = await getBookings(session.user.email);
+          setViewings(
+            userBookings.map((b) => ({
+              id: b._id,
+              propertyTitle: b.propertyTitle,
+              agent: b.agent?.name || 'Expert Agent',
+              date: b.date,
+              time: b.time,
+              status: b.status || 'Pending',
+            }))
+          );
+        } catch (err) {
+          console.error('Error fetching bookings:', err);
+        }
+      };
+
+      const fetchFavorites = async () => {
+        try {
+          const userFavs = await getFavorites(session.user.email);
+          setSavedProperties(
+            userFavs.map((f) => ({
+              id: f.propertyId.toString(),
+              title: f.title,
+              price: typeof f.price === 'number' ? `$${f.price.toLocaleString()}` : f.price,
+              location: f.location,
+              image: f.image,
+              beds: f.beds,
+              baths: f.baths,
+              sqft: f.sqft,
+              type: f.type,
+            }))
+          );
+        } catch (err) {
+          console.error('Error fetching favorites:', err);
+        }
+      };
+
+      fetchBookings();
+      fetchFavorites();
     }
-  }, [session]);
+  }, [session, isAdmin]);
 
   if (status === 'loading') {
     return (
@@ -246,12 +250,24 @@ const ProfilePage = () => {
       confirmButtonText: 'Yes, remove it',
     }).then((result) => {
       if (result.isConfirmed) {
-        setSavedProperties(savedProperties.filter((p) => p.id !== id));
-        Swal.fire({
-          title: 'Removed!',
-          text: 'Listing removed from favorites.',
-          icon: 'success',
-          confirmButtonColor: '#10b981',
+        toggleFavorite({ propertyId: id, userEmail: session.user.email }).then((res) => {
+          if (res?.success) {
+            setSavedProperties(savedProperties.filter((p) => p.id !== id));
+            window.dispatchEvent(new Event('favorites-updated'));
+            Swal.fire({
+              title: 'Removed!',
+              text: 'Listing removed from favorites.',
+              icon: 'success',
+              confirmButtonColor: '#10b981',
+            });
+          } else {
+            Swal.fire({
+              title: 'Error!',
+              text: res?.error || 'Could not remove favorite.',
+              icon: 'error',
+              confirmButtonColor: '#ef4444',
+            });
+          }
         });
       }
     });
@@ -306,12 +322,23 @@ const ProfilePage = () => {
             )}
             <div className="overflow-hidden">
               <h4 className="font-extrabold text-xs text-base-content truncate">{profileForm.name}</h4>
-              <span className="text-[10px] text-base-content/50 font-bold tracking-wider uppercase block mt-0.5">VIP INVESTOR</span>
+              <span className="text-[10px] text-base-content/50 font-bold tracking-wider uppercase block mt-0.5">
+                {isAdmin ? 'ADMINISTRATOR' : 'VIP INVESTOR'}
+              </span>
             </div>
           </div>
 
           {/* Navigation Links */}
           <nav className="space-y-1.5">
+            {isAdmin && (
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider w-full text-left bg-gradient-to-r from-accent to-indigo-600 text-white shadow-lg shadow-accent/20 hover:scale-[1.01] transition-all mb-4"
+              >
+                <SlidersHorizontal size={16} />
+                Admin Dashboard
+              </Link>
+            )}
             <button
               onClick={() => setActiveTab('overview')}
               className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider w-full text-left transition-all ${
@@ -695,12 +722,23 @@ const ProfilePage = () => {
                               confirmButtonText: 'Yes, cancel tour',
                             }).then((result) => {
                               if (result.isConfirmed) {
-                                setViewings(viewings.filter((v) => v.id !== viewing.id));
-                                Swal.fire({
-                                  title: 'Cancelled!',
-                                  text: 'Viewing appointment has been cancelled.',
-                                  icon: 'success',
-                                  confirmButtonColor: '#10b981',
+                                deleteBooking(viewing.id).then((res) => {
+                                  if (res?.success) {
+                                    setViewings(viewings.filter((v) => v.id !== viewing.id));
+                                    Swal.fire({
+                                      title: 'Cancelled!',
+                                      text: 'Viewing appointment has been cancelled.',
+                                      icon: 'success',
+                                      confirmButtonColor: '#10b981',
+                                    });
+                                  } else {
+                                    Swal.fire({
+                                      title: 'Error!',
+                                      text: res?.error || 'Could not cancel booking.',
+                                      icon: 'error',
+                                      confirmButtonColor: '#ef4444',
+                                    });
+                                  }
                                 });
                               }
                             });

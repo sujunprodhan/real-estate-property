@@ -1,9 +1,76 @@
 'use client';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { MapPin, BedDouble, Bath, Square, Heart } from 'lucide-react';
 import Image from 'next/image';
+import Swal from 'sweetalert2';
+import { toggleFavorite, checkIfFavorite } from '../../../actions/server/favorite';
 
 const PropertyCard = ({ property }) => {
+  const { data: session } = useSession();
+  const [isFav, setIsFav] = useState(false);
+
+  useEffect(() => {
+    if (session?.user?.email && property?._id) {
+      checkIfFavorite(property._id, session.user.email).then((res) => {
+        setIsFav(res);
+      });
+    }
+  }, [session, property?._id]);
+
+  const handleFavoriteClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!session) {
+      Swal.fire({
+        title: 'Authentication Required',
+        text: 'Please log in to add properties to your favorites.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3b82f6',
+        confirmButtonText: 'Log In Now',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = `/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`;
+        }
+      });
+      return;
+    }
+
+    try {
+      const payload = {
+        propertyId: property._id,
+        userEmail: session.user.email,
+        propertyTitle: property.title,
+        propertyPrice: property.price,
+        propertyLocation: `${property.location?.address || ''}, ${property.location?.city || ''}`,
+        propertyImage: property.images?.[0] || '',
+        propertyBeds: property.bedrooms,
+        propertyBaths: property.bathrooms,
+        propertySqft: property.area,
+        propertyType: property.status === 'For Rent' ? 'Rental' : 'For Sale',
+      };
+
+      const result = await toggleFavorite(payload);
+      if (result?.success) {
+        setIsFav(result.action === 'added');
+        window.dispatchEvent(new Event('favorites-updated'));
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: result.action === 'added' ? 'Added to favorites!' : 'Removed from favorites!',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <div className="group bg-base-100 rounded-2rem overflow-hidden border border-base-200 hover:border-primary/50 shadow-sm hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 transition-all duration-500 flex flex-col h-full relative">
       {/* Image Box */}
@@ -19,8 +86,12 @@ const PropertyCard = ({ property }) => {
           </div>
 
           {/* Favorite Button */}
-          <button className="w-10 h-10 rounded-full bg-base-100/90 backdrop-blur-md flex items-center justify-center text-base-content/60 hover:text-red-500 hover:bg-white transition-colors shadow-lg">
-            <Heart size={20} />
+          <button 
+            onClick={handleFavoriteClick}
+            className={`w-10 h-10 rounded-full bg-base-100/90 backdrop-blur-md flex items-center justify-center transition-all shadow-lg ${isFav ? 'text-red-500 hover:text-red-600 scale-105' : 'text-base-content/60 hover:text-red-500 hover:scale-105'}`}
+            aria-label="Toggle Favorite"
+          >
+            <Heart size={20} fill={isFav ? '#ef4444' : 'none'} className={isFav ? 'text-red-500' : ''} />
           </button>
         </div>
 
