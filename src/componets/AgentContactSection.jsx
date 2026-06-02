@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Mail, Phone, User, Send, CheckCircle2, MessageSquare } from 'lucide-react';
+import { addAgentInquiry } from '../actions/server/inquiry';
 
 const agents = [
   {
@@ -44,19 +45,28 @@ const AgentContactSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate server submission
-    setTimeout(() => {
+    try {
+      const res = await addAgentInquiry({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+        agentName: selectedAgent,
+      });
+
       setIsSubmitting(false);
-      setIsSuccess(true);
-      setFormData({ name: '', email: '', phone: '', message: '' });
-      
-      // Clear success notification after 5 seconds
-      setTimeout(() => setIsSuccess(false), 5000);
-    }, 1500);
+      if (res?.success) {
+        setIsSuccess(true);
+        setFormData({ name: '', email: '', phone: '', message: '' });
+        setTimeout(() => setIsSuccess(false), 5000);
+      }
+    } catch (err) {
+      setIsSubmitting(false);
+    }
   };
 
   const handleAgentClick = (agentName) => {

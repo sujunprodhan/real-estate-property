@@ -17,6 +17,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import LiveSupportWidget from "../componets/layouts/LiveSupportWidget";
+
 export const metadata = {
   title: "Real Estate App",
   description: "Find your dream property",
@@ -31,21 +33,7 @@ export default function RootLayout({ children }) {
         data-theme="light"
         suppressHydrationWarning
       >
-        <head>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme') || 'light';
-                  document.documentElement.setAttribute('data-theme', theme);
-                } catch (e) {}
-              })();
-            `,
-            }}
-          />
-        </head>
-        <body className="min-h-screen flex flex-col relative overflow-x-hidden">
+        <body className="min-h-screen flex flex-col relative overflow-x-hidden" suppressHydrationWarning>
           {/* Animated Pulsing Background Orbs */}
           <div
             className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary/10 blur-[120px] animate-pulse pointer-events-none -z-10"
@@ -57,6 +45,7 @@ export default function RootLayout({ children }) {
           ></div>
 
           <LayoutWrapper>{children}</LayoutWrapper>
+          <LiveSupportWidget />
         </body>
       </html>
     </NextAuthProvider>

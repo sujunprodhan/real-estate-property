@@ -8,6 +8,9 @@ export const Collections = {
   USER: 'user',
   BOOKING: 'booking',
   FAVORITE: 'favorite',
+  INQUIRY: 'inquiry',
+  BLOG: 'blog',
+  MESSAGE: 'message',
 };
 
 const client = new MongoClient(uri, {

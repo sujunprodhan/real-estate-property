@@ -2,7 +2,12 @@
 
 import { Collections, dbConnect } from '../../lib/dbConnect';
 import { ObjectId } from 'mongodb';
-import { sendBookingNotificationEmail, sendBookingConfirmationEmail } from '../../lib/email';
+import {
+  sendBookingNotificationEmail,
+  sendAdminNewBookingNotificationEmail,
+  sendBookingConfirmationEmail,
+  sendBookingRejectionEmail,
+} from '../../lib/email';
 
 export const addBooking = async (payload) => {
   const {
@@ -46,6 +51,7 @@ export const addBooking = async (payload) => {
     const result = await collection.insertOne(newBooking);
     if (result.acknowledged) {
       try {
+        // Send email notification to User
         await sendBookingNotificationEmail({
           userEmail,
           userName,
@@ -55,8 +61,18 @@ export const addBooking = async (payload) => {
           phone: phone || '',
           message,
         });
+
+        // Send email notification to Admin
+        await sendAdminNewBookingNotificationEmail({
+          userEmail,
+          userName,
+          propertyTitle,
+          date,
+          time,
+          phone: phone || '',
+          message,
+        });
       } catch (emailErr) {
-        console.error('Failed to send booking notification email:', emailErr);
       }
 
       return {
@@ -78,7 +94,6 @@ export const getBookings = async (email) => {
     const bookings = await collection.find({ userEmail: email }).sort({ createdAt: -1 }).toArray();
     return JSON.parse(JSON.stringify(bookings));
   } catch (error) {
-    console.error('Error fetching bookings:', error);
     return [];
   }
 };
@@ -103,7 +118,6 @@ export const getAllBookings = async () => {
     const bookings = await collection.find().sort({ createdAt: -1 }).toArray();
     return JSON.parse(JSON.stringify(bookings));
   } catch (error) {
-    console.error('Error fetching all bookings:', error);
     return [];
   }
 };
@@ -130,7 +144,17 @@ export const updateBookingStatus = async (id, status) => {
             phone: booking.phone || '',
           });
         } catch (emailErr) {
-          console.error('Failed to send booking confirmation invoice email:', emailErr);
+        }
+      } else if (status === 'Rejected' && booking) {
+        try {
+          await sendBookingRejectionEmail({
+            userEmail: booking.userEmail,
+            userName: booking.userName,
+            propertyTitle: booking.propertyTitle,
+            date: booking.date,
+            time: booking.time,
+          });
+        } catch (emailErr) {
         }
       }
       return { success: true };

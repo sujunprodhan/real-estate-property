@@ -10,11 +10,12 @@ import {
   BookOpen, 
   ArrowUpRight 
 } from 'lucide-react';
-import blogs from '../../../data/blogs.json';
+import { getBlogs, getSingleBlog } from '../../../actions/server/blog';
 import BlogInteractions from '../../../componets/BlogInteractions';
 
 // Generate static params for all dynamic slugs to enable fast static optimization
 export async function generateStaticParams() {
+  const blogs = await getBlogs();
   return blogs.map((post) => ({
     slug: post.slug,
   }));
@@ -24,9 +25,9 @@ export default async function BlogDetailsPage({ params }) {
   const { slug } = await params;
   
   // Find current blog post
-  const post = blogs.find((b) => b.slug === slug);
+  const post = await getSingleBlog(slug);
 
-  if (!post) {
+  if (!post || !post.title) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-base-100 px-6">
         <div className="text-center p-8 bg-base-200/50 border border-base-200 rounded-[2.5rem] max-w-md w-full backdrop-blur-md">
@@ -43,7 +44,8 @@ export default async function BlogDetailsPage({ params }) {
   }
 
   // Get related articles (excluding the current one)
-  const relatedArticles = blogs.filter((b) => b.slug !== slug).slice(0, 2);
+  const allBlogs = await getBlogs();
+  const relatedArticles = allBlogs.filter((b) => b.slug !== slug).slice(0, 2);
 
   return (
     <main className="min-h-screen bg-base-100 pb-24 pt-32">

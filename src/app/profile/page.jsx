@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getBookings, deleteBooking, getAllBookings, updateBookingStatus } from '../../actions/server/booking';
 import { getFavorites, toggleFavorite } from '../../actions/server/favorite';
+import { getUserProfile, updateUserProfile } from '../../actions/server/user';
+import { getUnreadCount } from '../../actions/server/message';
+import ChatInterface from '../../componets/chat/ChatInterface';
 import {
   User,
   Building,
@@ -27,6 +30,7 @@ import {
   Search,
   SlidersHorizontal,
   Bell,
+  Sparkles,
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 
@@ -37,6 +41,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
   const isAdmin = session?.user?.role === 'admin';
 
   useEffect(() => {
@@ -63,6 +68,22 @@ const ProfilePage = () => {
   // Dynamic viewings from database
   const [viewings, setViewings] = useState([]);
 
+  // Calculate dynamic Portfolio Value based on saved estates
+  const portfolioValue = savedProperties.reduce((acc, prop) => {
+    if (typeof prop.price === 'string') {
+      const numericPrice = parseFloat(prop.price.replace(/[^0-9.]/g, ''));
+      return acc + (isNaN(numericPrice) ? 0 : numericPrice);
+    }
+    if (typeof prop.price === 'number') {
+      return acc + prop.price;
+    }
+    return acc;
+  }, 0);
+
+  const formattedPortfolioValue = portfolioValue > 0
+    ? `$${(portfolioValue / 1000000).toFixed(1)}M`
+    : '$0.0M';
+
   // Mock inbox messages
   const [messages, setMessages] = useState([
     {
@@ -87,12 +108,31 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (session?.user) {
-      setProfileForm((prev) => ({
-        ...prev,
-        name: session.user.name || '',
-        email: session.user.email || '',
-      }));
-      setAvatarPreview(session.user.image || null);
+      const fetchProfile = async () => {
+        try {
+          const dbProfile = await getUserProfile(session.user.email);
+          if (dbProfile) {
+            setProfileForm({
+              name: dbProfile.name || session.user.name || '',
+              email: dbProfile.email || session.user.email || '',
+              phone: dbProfile.phone || '',
+              bio: dbProfile.bio || '',
+            });
+            setAvatarPreview(dbProfile.image || session.user.image || null);
+          } else {
+            setProfileForm((prev) => ({
+              ...prev,
+              name: session.user.name || '',
+              email: session.user.email || '',
+            }));
+            setAvatarPreview(session.user.image || null);
+          }
+        } catch (err) {
+          console.error('Error fetching db profile:', err);
+        }
+      };
+
+      fetchProfile();
 
       const fetchBookings = async () => {
         try {
@@ -133,8 +173,21 @@ const ProfilePage = () => {
         }
       };
 
+      const checkUnread = async () => {
+        try {
+          const count = await getUnreadCount(session.user.email, isAdmin);
+          setUnreadCount(count);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
       fetchBookings();
       fetchFavorites();
+      checkUnread();
+      
+      const interval = setInterval(checkUnread, 3000);
+      return () => clearInterval(interval);
     }
   }, [session, isAdmin]);
 
@@ -217,16 +270,30 @@ const ProfilePage = () => {
         finalAvatarUrl = await uploadImageToImgbb(imageFile);
       }
       
-      // Mimic saving database
-      setTimeout(async () => {
-        setLoading(false);
+      const res = await updateUserProfile(session.user.email, {
+        name: profileForm.name,
+        image: finalAvatarUrl || '',
+        phone: profileForm.phone || '',
+        bio: profileForm.bio || '',
+      });
+
+      setLoading(false);
+      if (res?.success) {
         await Swal.fire({
           icon: 'success',
           title: 'Profile Updated!',
-          text: 'Your investor settings have been updated.',
+          text: 'Your investor settings have been successfully persisted.',
           confirmButtonColor: '#10b981',
         });
-      }, 1000);
+        window.location.reload();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Save Failed',
+          text: res?.error || 'Could not save profile changes.',
+          confirmButtonColor: '#ef4444',
+        });
+      }
     } catch (error) {
       setLoading(false);
       Swal.fire({
@@ -339,6 +406,15 @@ const ProfilePage = () => {
                 Admin Dashboard
               </Link>
             )}
+            {!isAdmin && (
+              <Link
+                href="/membership"
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider w-full text-left bg-linear-to-r from-amber-500 to-amber-600 text-white shadow-lg shadow-amber-500/20 hover:scale-[1.01] transition-all my-3 border border-amber-400/30 animate-pulse shrink-0"
+              >
+                <Sparkles size={16} className="text-white shrink-0 animate-spin" style={{ animationDuration: '3s' }} />
+                VIP Membership Upgrade
+              </Link>
+            )}
             <button
               onClick={() => setActiveTab('overview')}
               className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl font-black text-xs uppercase tracking-wider w-full text-left transition-all ${
@@ -384,7 +460,9 @@ const ProfilePage = () => {
             >
               <MessageSquare size={16} />
               Inbox & Chat
-              <span className="badge badge-sm badge-primary ml-auto font-black">1</span>
+              {unreadCount > 0 && (
+                <span className="badge badge-sm badge-accent ml-auto font-black animate-pulse">{unreadCount}</span>
+              )}
             </button>
             <button
               onClick={() => setActiveTab('settings')}
@@ -433,9 +511,13 @@ const ProfilePage = () => {
           </div>
           <div className="flex items-center gap-3">
             {/* Quick alert notifications indicator */}
-            <button className="btn btn-circle btn-ghost bg-base-100 border border-base-200/40 relative">
+            <button className="btn btn-circle btn-ghost bg-base-100 border border-base-200/40 relative" onClick={() => setActiveTab('messages')}>
               <Bell size={20} className="text-base-content/70" />
-              <span className="w-2.5 h-2.5 bg-accent rounded-full absolute top-2.5 right-2.5 animate-ping"></span>
+              {unreadCount > 0 && (
+                <span className="w-4 h-4 bg-accent text-[8px] font-black text-white flex items-center justify-center rounded-full absolute -top-1 -right-1 shadow-md animate-pulse">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </button>
             <div className="text-right hidden sm:block">
               <span className="text-[10px] text-base-content/40 font-black tracking-wider uppercase block">CURRENT DATE</span>
@@ -482,7 +564,7 @@ const ProfilePage = () => {
                 </div>
                 <div>
                   <span className="text-[10px] font-black text-base-content/40 uppercase tracking-widest block">Portfolio Value</span>
-                  <span className="text-3xl font-black text-base-content block mt-1">$14.4M</span>
+                  <span className="text-3xl font-black text-base-content block mt-1">{formattedPortfolioValue}</span>
                 </div>
               </div>
             </div>
@@ -612,7 +694,9 @@ const ProfilePage = () => {
                       <div className="space-y-2">
                         <div className="flex items-center gap-1.5 text-primary text-[10px] font-black tracking-wider uppercase">
                           <MapPin size={11} className="shrink-0" />
-                          {property.location}
+                          {typeof property.location === 'object' 
+                            ? `${property.location?.city || property.location?.address || ''}`
+                            : property.location}
                         </div>
                         <h4 className="font-extrabold text-sm text-base-content line-clamp-1 leading-snug">
                           {property.title}
@@ -670,15 +754,8 @@ const ProfilePage = () => {
                 Scheduled Tours & Viewings
               </h3>
               <button
-                onClick={() =>
-                  Swal.fire({
-                    icon: 'info',
-                    title: 'Book a Viewing Tour',
-                    text: 'Explore our listed buildings, find the one you love, and select a viewing window directly on the property details page.',
-                    confirmButtonColor: '#10b981',
-                  })
-                }
-                className="btn btn-primary btn-sm rounded-full font-bold text-xs flex items-center gap-1 text-white shadow-lg shadow-primary/20"
+                onClick={() => router.push('/property')}
+                className="btn btn-primary btn-sm rounded-full font-bold text-xs flex items-center gap-1 text-white shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"
               >
                 <Plus size={14} /> Book tour
               </button>
@@ -759,137 +836,8 @@ const ProfilePage = () => {
 
         {/* -------------------- TAB CONTENT: INBOX MESSAGES -------------------- */}
         {activeTab === 'messages' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 bg-base-200/50 border border-base-100 rounded-[2rem] overflow-hidden min-h-[500px] shadow-sm">
-            {/* Left 1/3 - Conversation list */}
-            <div className="border-r border-base-100 p-6 space-y-6 bg-base-200/30">
-              <h3 className="text-base font-black text-base-content uppercase tracking-tight">Chats</h3>
-              <div className="space-y-3">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className="p-3 bg-base-100 hover:bg-base-100/90 border border-base-200 rounded-2xl flex items-center gap-3 cursor-pointer transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xs relative"
-                  >
-                    <img
-                      src={message.avatar}
-                      alt={message.agent}
-                      className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-primary/10"
-                    />
-                    <div className="overflow-hidden flex-1">
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-extrabold text-[11px] text-base-content truncate">{message.agent}</h4>
-                        <span className="text-[9px] text-base-content/40 font-bold shrink-0">{message.date}</span>
-                      </div>
-                      <span className="text-[9px] font-black text-primary block truncate mt-0.5 uppercase tracking-wide">
-                        {message.property}
-                      </span>
-                      <p className="text-[10px] text-base-content/65 font-bold truncate mt-1 leading-snug">
-                        {message.lastMessage}
-                      </p>
-                    </div>
-                    {message.unread && (
-                      <span className="w-2 h-2 rounded-full bg-accent absolute top-3 right-3 animate-pulse"></span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right 2/3 - Conversation Details panel */}
-            <div className="lg:col-span-2 flex flex-col justify-between bg-base-100/50">
-              {/* Header */}
-              <div className="p-4 border-b border-base-100 bg-base-100/90 flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100"
-                    alt="Marcus Vance"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <div>
-                    <h4 className="font-extrabold text-xs text-base-content">Marcus Vance</h4>
-                    <span className="text-[9px] text-emerald-500 font-extrabold uppercase tracking-wide">Active Listing Advisor</span>
-                  </div>
-                </div>
-                <span className="text-[9px] font-black text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
-                  The Obsidian Grand Penthouse
-                </span>
-              </div>
-
-              {/* Chat Messages */}
-              <div className="p-6 space-y-4 overflow-y-auto flex-1 max-h-[350px]">
-                {/* Agent Bubble */}
-                <div className="chat chat-start">
-                  <div className="chat-image avatar">
-                    <div className="w-8 rounded-full">
-                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100" />
-                    </div>
-                  </div>
-                  <div className="chat-header text-[10px] font-bold text-base-content/40 mb-1">
-                    Marcus Vance <time className="text-[9px] font-bold pl-1 text-base-content/30">10:12 AM</time>
-                  </div>
-                  <div className="chat-bubble bg-base-200 text-base-content text-xs font-semibold rounded-2xl max-w-xs leading-relaxed">
-                    Hello! I saw your inquiry about the top Penthouse on Park Ave.
-                  </div>
-                </div>
-
-                {/* User Bubble */}
-                <div className="chat chat-end">
-                  <div className="chat-image avatar">
-                    <div className="w-8 rounded-full overflow-hidden">
-                      {avatarPreview ? (
-                        <img src={avatarPreview} />
-                      ) : (
-                        <div className="w-full h-full bg-primary flex items-center justify-center text-primary-content text-[10px] font-black uppercase">
-                          US
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="chat-header text-[10px] font-bold text-base-content/40 mb-1">
-                    You <time className="text-[9px] font-bold pl-1 text-base-content/30">10:13 AM</time>
-                  </div>
-                  <div className="chat-bubble bg-primary text-primary-content text-xs font-semibold rounded-2xl max-w-xs leading-relaxed">
-                    Yes, I am looking to schedule a private walkthrough. Does this Thursday morning work?
-                  </div>
-                </div>
-
-                {/* Agent Bubble */}
-                <div className="chat chat-start">
-                  <div className="chat-image avatar">
-                    <div className="w-8 rounded-full">
-                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100" />
-                    </div>
-                  </div>
-                  <div className="chat-header text-[10px] font-bold text-base-content/40 mb-1">
-                    Marcus Vance <time className="text-[9px] font-bold pl-1 text-base-content/30">10:14 AM</time>
-                  </div>
-                  <div className="chat-bubble bg-base-200 text-base-content text-xs font-semibold rounded-2xl max-w-xs leading-relaxed">
-                    The penthouse is available for viewing on Thursday morning. Let me know if that works.
-                  </div>
-                </div>
-              </div>
-
-              {/* Chat Input panel */}
-              <div className="p-4 border-t border-base-100 bg-base-100/90 flex gap-2 items-center shrink-0">
-                <input
-                  type="text"
-                  placeholder="Type a message to advisor..."
-                  className="input input-sm w-full bg-base-200 border-none rounded-full text-xs font-semibold focus:outline-none px-4 h-10"
-                />
-                <button
-                  onClick={() =>
-                    Swal.fire({
-                      icon: 'success',
-                      title: 'Message Sent',
-                      text: 'Message simulated successfully.',
-                      confirmButtonColor: '#10b981',
-                    })
-                  }
-                  className="btn btn-primary btn-circle btn-sm h-10 w-10 min-h-10 text-white shadow-md shadow-primary/20 shrink-0"
-                >
-                  <MessageSquare size={14} />
-                </button>
-              </div>
-            </div>
+          <div className="bg-base-200/50 border border-base-100 rounded-[2rem] overflow-hidden min-h-[500px] shadow-sm p-4">
+            <ChatInterface session={session} isAdminMode={isAdmin} />
           </div>
         )}
 

@@ -72,6 +72,8 @@ const AddBooking = ({ property }) => {
           text: 'Your viewing has been requested. The agent will contact you shortly.',
           confirmButtonColor: '#10b981',
         });
+
+        window.dispatchEvent(new Event('bookings-updated'));
       } else {
         Swal.fire({
           icon: 'error',

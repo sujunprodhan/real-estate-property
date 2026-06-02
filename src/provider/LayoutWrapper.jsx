@@ -8,6 +8,12 @@ import Footer from '../componets/layouts/Footer';
 const LayoutWrapper = ({ children }) => {
   const pathname = usePathname();
 
+  // Initialize theme on client mount
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
   // Hide global navbar and footer on profile/dashboard routes
   const isDashboard = pathname.startsWith('/profile') || pathname.startsWith('/dashboard');
 
