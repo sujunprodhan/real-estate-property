@@ -245,7 +245,7 @@ const Navbar = () => {
                 <div className="absolute top-[80%] left-0 pt-4 w-48 opacity-0 translate-y-2 pointer-events-none group-hover/blog-dropdown:opacity-100 group-hover/blog-dropdown:translate-y-0 group-hover/blog-dropdown:pointer-events-auto transition-all duration-300 z-50">
                   <div className="bg-base-200 border border-base-100/60 rounded-2xl p-2 shadow-2xl">
                     <Link
-                      href="/blogs/investing-oceanfront-property"
+                      href="/blogs"
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl hover:bg-primary hover:text-white font-extrabold text-[10px] uppercase tracking-wider transition-colors text-base-content/75"
                     >
                       View All Blog
@@ -427,7 +427,7 @@ const Navbar = () => {
               Agents
             </MobileNavLink>
 
-            <MobileNavLink href="/blogs/investing-oceanfront-property" icon={BookOpen} onClick={() => setIsMobileMenuOpen(false)}>
+            <MobileNavLink href="/blogs" icon={BookOpen} onClick={() => setIsMobileMenuOpen(false)}>
               View All Blog
             </MobileNavLink>
 

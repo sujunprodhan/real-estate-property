@@ -141,6 +141,7 @@ const ProfilePage = () => {
             userBookings.map((b) => ({
               id: b._id,
               propertyTitle: b.propertyTitle,
+              propertyImage: b.propertyImage,
               agent: b.agent?.name || 'Expert Agent',
               date: b.date,
               time: b.time,
@@ -773,10 +774,17 @@ const ProfilePage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-base-100/40">
-                  {viewings.map((viewing) => (
-                    <tr key={viewing.id} className="hover:bg-base-100/20 transition-colors">
-                      <td className="font-extrabold text-xs text-base-content py-4">{viewing.propertyTitle}</td>
-                      <td className="text-xs font-semibold text-base-content/85">{viewing.agent}</td>
+                      {viewings.map((viewing) => (
+                        <tr key={viewing.id} className="hover:bg-base-100/20 transition-colors">
+                          <td className="font-extrabold text-xs text-base-content py-4">
+                            <div className="flex items-center gap-3">
+                              {viewing.propertyImage && (
+                                <img src={viewing.propertyImage} alt={viewing.propertyTitle} className="w-10 h-10 rounded-lg object-cover shadow-sm" />
+                              )}
+                              <span>{viewing.propertyTitle}</span>
+                            </div>
+                          </td>
+                          <td className="text-xs font-semibold text-base-content/85">{viewing.agent}</td>
                       <td className="text-xs font-bold text-primary">{viewing.date} at {viewing.time}</td>
                       <td>
                         <span

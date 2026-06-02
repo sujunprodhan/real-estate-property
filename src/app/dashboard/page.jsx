@@ -846,7 +846,14 @@ const AdminDashboard = () => {
                     <tbody className="divide-y divide-base-100/40">
                       {bookings.map((booking) => (
                         <tr key={booking._id} className="hover:bg-base-100/20 transition-colors">
-                          <td className="font-extrabold text-xs text-base-content py-4">{booking.propertyTitle}</td>
+                          <td className="font-extrabold text-xs text-base-content py-4">
+                            <div className="flex items-center gap-3">
+                              {booking.propertyImage && (
+                                <img src={booking.propertyImage} alt={booking.propertyTitle} className="w-10 h-10 rounded-lg object-cover shadow-sm" />
+                              )}
+                              <span>{booking.propertyTitle}</span>
+                            </div>
+                          </td>
                           <td className="text-xs font-semibold text-base-content/85">
                             <div className="font-extrabold">{booking.userName || 'Client'}</div>
                             <div className="text-[10px] text-base-content/55 font-bold mt-0.5">{booking.userEmail}</div>
