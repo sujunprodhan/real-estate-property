@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
+import { useRouter } from 'next/navigation';
 
 const Home = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -13,6 +14,17 @@ const Home = () => {
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  const router = useRouter();
+  const [searchLocation, setSearchLocation] = useState('');
+  const [propertyType, setPropertyType] = useState('');
+
+  const handleSearch = () => {
+    let query = '/property?';
+    if (propertyType) query += `category=${propertyType}&`;
+    if (searchLocation) query += `search=${encodeURIComponent(searchLocation)}`;
+    router.push(query);
+  };
 
   const slidesData = [
     {
@@ -116,7 +128,13 @@ const Home = () => {
                 </div>
                 <div className="flex flex-col w-full">
                   <label className="text-[10px] font-bold text-white/50 uppercase tracking-widest leading-none mb-1">Location</label>
-                  <input type="text" placeholder="New York, USA" className="bg-transparent border-none outline-none text-white font-semibold w-full placeholder:text-white/30 h-6 py-0 text-sm focus:ring-0" />
+                  <input 
+                    type="text" 
+                    placeholder="New York, USA" 
+                    value={searchLocation}
+                    onChange={(e) => setSearchLocation(e.target.value)}
+                    className="bg-transparent border-none outline-none text-white font-semibold w-full placeholder:text-white/30 h-6 py-0 text-sm focus:ring-0" 
+                  />
                 </div>
               </div>
 
@@ -127,18 +145,26 @@ const Home = () => {
                 </div>
                 <div className="flex flex-col w-full">
                   <label className="text-[10px] font-bold text-white/50 uppercase tracking-widest leading-none mb-1">Property Type</label>
-                  <select className="bg-transparent border-none outline-none text-white font-semibold w-full cursor-pointer h-6 py-0 text-sm focus:ring-0" defaultValue="">
+                  <select 
+                    value={propertyType}
+                    onChange={(e) => setPropertyType(e.target.value)}
+                    className="bg-transparent border-none outline-none text-white font-semibold w-full cursor-pointer h-6 py-0 text-sm focus:ring-0" 
+                  >
                     <option value="" disabled className="bg-slate-950 text-white">Select type</option>
-                    <option value="house" className="bg-slate-950 text-white">Luxury House</option>
-                    <option value="apartment" className="bg-slate-950 text-white">Modern Apartment</option>
-                    <option value="villa" className="bg-slate-950 text-white">Beach Villa</option>
-                    <option value="penthouse" className="bg-slate-950 text-white">Penthouse</option>
+                    <option value="Villa" className="bg-slate-950 text-white">Luxury Villa</option>
+                    <option value="Apartment" className="bg-slate-950 text-white">Modern Apartment</option>
+                    <option value="House" className="bg-slate-950 text-white">Family House</option>
+                    <option value="Commercial" className="bg-slate-950 text-white">Commercial</option>
+                    <option value="Land" className="bg-slate-950 text-white">Land Plot</option>
                   </select>
                 </div>
               </div>
 
               {/* Search Button */}
-              <button className="btn btn-primary h-16 rounded-2xl px-10 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-primary/30 flex items-center justify-center gap-2 border-none w-full md:w-auto shrink-0 font-extrabold text-sm tracking-wider uppercase bg-linear-to-r from-primary to-indigo-500 hover:from-primary hover:to-indigo-600 text-white">
+              <button 
+                onClick={handleSearch}
+                className="btn btn-primary h-16 rounded-2xl px-10 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-primary/30 flex items-center justify-center gap-2 border-none w-full md:w-auto shrink-0 font-extrabold text-sm tracking-wider uppercase bg-linear-to-r from-primary to-indigo-500 hover:from-primary hover:to-indigo-600 text-white"
+              >
                 <Search size={18} className="stroke-3" />
                 <span>Search</span>
               </button>

@@ -14,7 +14,6 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials, req) {
-        console.log('NextAuth Authorize credentials received:', credentials);
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
@@ -23,8 +22,6 @@ export const authOptions = {
           email: credentials.email,
           password: credentials.password,
         });
-
-        console.log('Logged in user details:', user);
         if (user) {
           return user;
         }
@@ -65,7 +62,6 @@ export const authOptions = {
           }
           return true;
         } catch (error) {
-          console.error('Error during social login signin callback:', error);
           return false;
         }
       }
@@ -82,7 +78,6 @@ export const authOptions = {
             token.provider = dbUser.provider;
           }
         } catch (error) {
-          console.error('Error in NextAuth jwt callback:', error);
         }
       }
       return token;
@@ -100,4 +95,3 @@ export const authOptions = {
 };
 
 export default NextAuth(authOptions);
-

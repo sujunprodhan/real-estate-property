@@ -1,14 +1,27 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, BedDouble, Bath, Square, Mail, Phone, CheckCircle } from 'lucide-react';
-import { getSingleProperty } from '../../../actions/server/property';
+import { MapPin, BedDouble, Bath, Square, Mail, Phone } from 'lucide-react';
+import { getSingleProperty, getProperty } from '../../../actions/server/property';
 import PropertyTabs from '../../../componets/PropertyTabs';
+import PropertyCard from '../../../componets/layouts/card/PropertyCard';
 import AddBooking from '../../../componets/layouts/buttons/AddBooking';
 
 const ProductDetails = async ({ params }) => {
   const { id } = await params;
   const property = await getSingleProperty(id);
+  const allProperties = await getProperty();
+
+  const currentCategory = property?.category || property?.propertyType;
+  let relatedProperties = allProperties?.filter((p) => {
+    const pCategory = p.category || p.propertyType;
+    return pCategory === currentCategory && p._id?.toString() !== id.toString();
+  }).slice(0, 3) || [];
+
+  // Fallback: show any other properties if no same-category ones found
+  if (relatedProperties.length === 0) {
+    relatedProperties = allProperties?.filter((p) => p._id?.toString() !== id.toString()).slice(0, 3) || [];
+  }
 
   if (!property || !property.title) {
     return (
@@ -27,12 +40,11 @@ const ProductDetails = async ({ params }) => {
   return (
     <div className="min-h-screen bg-base-100/50 py-12 relative z-10 w-full">
       <div className="container mx-auto px-6 lg:px-12 max-w-6xl">
+
         {/* Navigation Breadcrumb */}
         <div className="text-sm breadcrumbs mt-20 mb-8 text-base-content/60">
           <ul>
-            <li>
-              <Link href="/">Home</Link>
-            </li>
+            <li><Link href="/">Home</Link></li>
             <li>Properties</li>
             <li className="text-primary font-semibold truncate max-w-xs">{property.title}</li>
           </ul>
@@ -40,12 +52,9 @@ const ProductDetails = async ({ params }) => {
 
         {/* Hero Grid / Image Gallery */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="md:col-span-2 relative h-400px md:h-500px rounded-3xl overflow-hidden shadow-xl border border-base-200">
+          <div className="md:col-span-2 relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-xl border border-base-200">
             <Image
-              src={
-                property.images?.[0] ||
-                'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3'
-              }
+              src={property.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3'}
               alt={property.title}
               fill
               className="object-cover"
@@ -61,11 +70,7 @@ const ProductDetails = async ({ params }) => {
           <div className="flex flex-col gap-6 h-[500px]">
             <div className="relative flex-1 rounded-3xl overflow-hidden shadow-lg border border-base-200">
               <Image
-                src={
-                  property.images?.[1] ||
-                  property.images?.[0] ||
-                  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3'
-                }
+                src={property.images?.[1] || property.images?.[0] || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3'}
                 alt={property.title}
                 fill
                 className="object-cover"
@@ -73,9 +78,7 @@ const ProductDetails = async ({ params }) => {
             </div>
             <div className="bg-base-100 rounded-3xl p-6 border border-base-200 shadow-lg flex flex-col justify-between">
               <div>
-                <span className="text-xs uppercase tracking-widest text-primary font-extrabold block mb-2">
-                  Price
-                </span>
+                <span className="text-xs uppercase tracking-widest text-primary font-extrabold block mb-2">Price</span>
                 <div className="text-4xl font-black text-primary flex items-end gap-1">
                   ${property.price?.toLocaleString()}
                   {property.status === 'For Rent' && (
@@ -99,6 +102,7 @@ const ProductDetails = async ({ params }) => {
 
         {/* Main Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
           {/* Left / Main Details Column */}
           <div className="lg:col-span-2 space-y-10">
             {/* Title & Location */}
@@ -118,28 +122,18 @@ const ProductDetails = async ({ params }) => {
               <div className="grid grid-cols-3 gap-4 mt-8 bg-base-200/50 rounded-2xl p-6 border border-base-200/50">
                 <div className="flex flex-col items-center justify-center gap-1.5 text-center">
                   <BedDouble size={26} className="text-primary mb-1" />
-                  <span className="text-base-content font-extrabold text-lg">
-                    {property.bedrooms}
-                  </span>
-                  <span className="text-base-content/50 text-[11px] uppercase tracking-wider font-bold">
-                    Bedrooms
-                  </span>
+                  <span className="text-base-content font-extrabold text-lg">{property.bedrooms}</span>
+                  <span className="text-base-content/50 text-[11px] uppercase tracking-wider font-bold">Bedrooms</span>
                 </div>
                 <div className="flex flex-col items-center justify-center gap-1.5 text-center border-x border-base-300">
                   <Bath size={26} className="text-primary mb-1" />
-                  <span className="text-base-content font-extrabold text-lg">
-                    {property.bathrooms}
-                  </span>
-                  <span className="text-base-content/50 text-[11px] uppercase tracking-wider font-bold">
-                    Bathrooms
-                  </span>
+                  <span className="text-base-content font-extrabold text-lg">{property.bathrooms}</span>
+                  <span className="text-base-content/50 text-[11px] uppercase tracking-wider font-bold">Bathrooms</span>
                 </div>
                 <div className="flex flex-col items-center justify-center gap-1.5 text-center">
                   <Square size={26} className="text-primary mb-1" />
                   <span className="text-base-content font-extrabold text-lg">{property.area}</span>
-                  <span className="text-base-content/50 text-[11px] uppercase tracking-wider font-bold">
-                    Square Feet
-                  </span>
+                  <span className="text-base-content/50 text-[11px] uppercase tracking-wider font-bold">Square Feet</span>
                 </div>
               </div>
             </div>
@@ -157,8 +151,7 @@ const ProductDetails = async ({ params }) => {
 
               <h3 className="text-2xl font-black mb-4">Schedule a Visit</h3>
               <p className="text-primary-content/85 text-[15px] leading-relaxed mb-6">
-                Interested in viewing this spectacular property in person? Request a private showing
-                with our agent today.
+                Interested in viewing this spectacular property in person? Request a private showing with our agent today.
               </p>
 
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 mb-6">
@@ -174,7 +167,6 @@ const ProductDetails = async ({ params }) => {
             </div>
 
             {/* Agent Info Card */}
-
             <div className="bg-base-100 rounded-3xl p-8 border border-base-200 shadow-lg relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl"></div>
 
@@ -186,11 +178,8 @@ const ProductDetails = async ({ params }) => {
                 <div className="avatar mb-4">
                   <div className="w-24 h-24 rounded-full ring-4 ring-primary ring-offset-base-100 ring-offset-4 overflow-hidden shadow-md">
                     <Image
-                      src={
-                        property.agent?.image ||
-                        'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3'
-                      }
-                      alt={property.agent?.name}
+                      src={property.agent?.image || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3'}
+                      alt={property.agent?.name || 'Agent'}
                       width={120}
                       height={120}
                       className="object-cover"
@@ -211,9 +200,7 @@ const ProductDetails = async ({ params }) => {
                   className="flex items-center gap-3 btn btn-outline btn-neutral w-full rounded-2xl justify-start px-6 font-semibold transition-all"
                 >
                   <Mail size={18} className="text-primary shrink-0" />
-                  <span className="truncate">
-                    {property.agent?.email || 'agent@realestate.com'}
-                  </span>
+                  <span className="truncate">{property.agent?.email || 'agent@realestate.com'}</span>
                 </a>
                 <a
                   href={`tel:${property.agent?.phone}`}
@@ -226,6 +213,62 @@ const ProductDetails = async ({ params }) => {
             </div>
           </div>
         </div>
+
+        {/* Neighborhood Highlights Section */}
+        <div className="mt-20">
+          <div className="bg-base-100 rounded-[2.5rem] p-10 lg:p-12 border border-base-200 shadow-xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+            <div className="relative z-10">
+              <h2 className="text-3xl font-extrabold text-base-content mb-8">Neighborhood Insights</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { title: 'Transit Score', value: '85/100', desc: 'Excellent Transit' },
+                  { title: 'Walk Score', value: '92/100', desc: "Walker's Paradise" },
+                  { title: 'Bike Score', value: '78/100', desc: 'Very Bikeable' },
+                  { title: 'Safety', value: 'A+', desc: 'Very Safe Area' },
+                ].map((insight, idx) => (
+                  <div key={idx} className="bg-base-200/50 p-6 rounded-3xl border border-base-200 hover:border-primary/30 transition-all">
+                    <span className="text-sm font-bold text-base-content/60 uppercase tracking-wider block mb-2">{insight.title}</span>
+                    <span className="text-3xl font-black text-primary block mb-1">{insight.value}</span>
+                    <span className="text-base font-medium text-base-content">{insight.desc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Related Properties Section */}
+        {relatedProperties.length > 0 && (
+          <div className="mt-24 mb-12">
+            <div className="flex justify-between items-end mb-10">
+              <div>
+                <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">
+                  More Options
+                </span>
+                <h2 className="text-3xl lg:text-4xl font-extrabold text-base-content tracking-tight">
+                  Similar Properties You May Like
+                </h2>
+              </div>
+              <Link href="/property" className="hidden md:inline-flex btn btn-outline btn-primary rounded-full px-8">
+                View All
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {relatedProperties.map((related) => (
+                <PropertyCard key={related._id?.toString()} property={related} />
+              ))}
+            </div>
+
+            <div className="mt-10 text-center md:hidden">
+              <Link href="/property" className="btn btn-outline btn-primary rounded-full px-8 w-full">
+                View All Properties
+              </Link>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
